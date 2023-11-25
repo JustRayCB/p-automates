@@ -55,12 +55,25 @@ Ainsi, pour un automate à $n$ états et $m$ transitions, nous aurons $n+m$ vari
 \label{sec:etats}
 
 Nous définissons notre ensemble $Q = \{q_0, q_1, \dots, q_n | n \le k\}$, qui 
-représente l'ensemble des états de l'automate. Posons $q_0$ comme l'état initial.
+représente l'ensemble des états de l'automate. 
 Nous pouvons définir les variables $e_i$ comme suit : 
 \begin{itemize}[label=$\bullet$]
     \item $q_i = 1$ si l'état $i$ est acceptant 
     \item $q_i = 0$ si l'état $i$ est non-acceptant 
 \end{itemize}
+
+\subsubsection{Etats initial} % (fold)
+\label{sec:etats_initial}
+
+Nous définissons notre ensemble $I = \{i_0, i_1, \dots, i_n | n \le k\}$, qui 
+représente l'ensemble des états initiaux de l'automate. 
+Nous pouvons définir les variables $i_i$ comme suit : 
+\begin{itemize}[label=$\bullet$]
+    \item $i_i = 1$ si l'état $i$ est initial 
+    \item $i_i = 0$ si l'état $i$ n'est pas initial 
+\end{itemize}
+
+% subsubsection Etats initial (end)
 
 % subsubsection Etats (end)
 
@@ -116,6 +129,39 @@ Nous pouvons définir les variables $Y_{n, i}$ comme suit :
 
 \subsection{FNC} % (fold) 
 \label{sub:fnc} 
+
+Voici les contraintes que nous avons définies pour modéliser un automate en FNC : 
+\begin{itemize}[label=$\bullet$]
+    \item Il faut qu'il y ait un et un seul état initial :
+    \begin{itemize}[label=$\circ$]
+        \item Un
+            \begin{itemize}[label=$\diamond$]
+                \item $\bigwedge_{i \in \{1, \dots, n\}} i_i$
+            \end{itemize}
+        \item et un seul
+            \begin{itemize}[label=$\diamond$]
+                \item $\bigwedge_{i, j \in \{1, \dots, n\} \wedge i \neq j}  \neg i_i \vee \neg i_j$
+            \end{itemize} 
+
+    \end{itemize}
+    \item Il faut qu'il y ait au moins un état final : 
+    \begin{itemize}[label=$\circ$]
+        \item $\bigvee_{i \in \{1, \dots, n\}} q_i$
+    \end{itemize}
+    \item Il faut que l'ensemble $P$ soit inclus dans l'ensemble des mots acceptés par l'automate : 
+    \begin{itemize}[label=$\circ$]
+        \item $\bigwedge_{p \in P} \bigwedge_{i \in Q} X_{p, i}$
+    \end{itemize}
+    \item Un mot se trouvant dans l'ensemble $N$ ne peut pas se trouver dans l'ensemble $P$ : 
+    \begin{itemize}[label=$\circ$]
+        \item $\bigwedge_{p \in P} \bigwedge_{n \in N} \bigwedge_{i \in Q} \neg (X_{p, i} \wedge Y_{n, i})$
+    \end{itemize} 
+    \item Chaque état doit avoir toutes les transitions possibles (automate complet) : 
+    \begin{itemize}[label=$\circ$]
+        \item $\bigwedge_{i \in Q} \bigwedge_{j \in Q \setminus \{i\}} \bigwedge_{s_i \in \Sigma} \bigvee_{s_j \in \Sigma} d_{i, j, s_i}$ 
+    \end{itemize} 
+\end{itemize} 
+
 
 
 
