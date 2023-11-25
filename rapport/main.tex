@@ -76,6 +76,32 @@ Nous pouvons définir les variables $d_{i, j, s_i}$ comme suit :
     \item $d_{i, j, s_i} = 0$ si la transition avec le symbole $s_i$ n'existe pas entre l'état $i$ et l'état $j$ 
 \end{itemize} 
 
+% subsubsection Transitions (end) 
+
+\subsubsection{Exemples positifs} % (fold)
+\label{sec:exemples_positifs}
+
+Nous définissons $X_{p, i}$ comme étant la variable qui représente le fait que le mot $p$ est accepté par l'automate à l'état $q_i$.
+Nous pouvons définir les variables $X_{p, i}$ comme suit : 
+\begin{itemize}[label=$\bullet$]
+    \item $X_{p, i} = 1$ si le mot $p$ est accepté par l'automate à l'état $q_i$ 
+    \item $X_{p, i} = 0$ si le mot $p$ n'est pas accepté par l'automate à l'état $q_i$ 
+\end{itemize}
+
+% subsubsection Exemples positifs (end)
+
+\subsubsection{Exemples négatifs} % (fold) 
+\label{sec:exemples_negatifs} 
+
+Nous définissons $Y_{n, i}$ comme étant la variable qui représente le fait que le mot $n$ n'est pas accepté par l'automate à l'état $q_i$. 
+
+Nous pouvons définir les variables $Y_{n, i}$ comme suit : 
+\begin{itemize}[label=$\bullet$]
+    \item $Y_{n, i} = 1$ si le mot $n$ n'est pas accepté par l'automate à l'état $q_i$ 
+    \item $Y_{n, i} = 0$ si le mot $n$ est accepté par l'automate à l'état $q_i$ 
+\end{itemize}
+
+
 \subsection{Contraintes} % (fold)
 \label{sub:contraintes}
 
@@ -84,8 +110,14 @@ Nous pouvons définir les variables $d_{i, j, s_i}$ comme suit :
     \item Il faut qu'il y ait au moins un état final
     \item Il faut que l'ensemble $P$ soit inclus dans l'ensemble des mots acceptés par l'automate 
     \item Un mot se trouvant dans l'ensemble $N$ ne peut pas se trouver dans l'ensemble $P$ 
+    \item Chaque état doit avoir toutes les transitions possibles. 
 \end{itemize}
 % subsection Contraintes (end)
+
+\subsection{FNC} % (fold) 
+\label{sub:fnc} 
+
+
 
 
 
