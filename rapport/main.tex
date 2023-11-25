@@ -1,0 +1,71 @@
+\documentclass[a4paper, 12pt]{extarticle}
+
+\input{preamble.tex} 
+
+
+% Based on 'Fun Template 1', available at https://www.overleaf.com/latex/templates/fun-template-1/drwvdzsrpgzz
+
+
+\begin{document}
+
+%================= Settings front page =================
+\titre{Rapport Informatique Fondamentale} %Titre du fichier .pdf
+\UE{INFO-F302} %Nom de la UE
+\sujet{Informatique Fondamentale} %Nom du sujet
+
+\enseignant{E. \textsc{Filliot} \\ R. \textsc{Petit}}  %Nom des enseignants
+% Use \\ TO BREAK LINE
+
+\eleves{Hugo \textsc{Callens} \\ Rayan \textsc{Contuliano Bravo} \\ Ethan \textsc{Rogge}}
+% \maketitle
+\makemargins %Afficher les marges
+\makefrontpage
+% \maketoc
+
+%=======================================================
+
+% this is the orginal latex code of the template
+% \input{example}
+
+%================= Content =============================
+
+\section{Modelisation d'automates en FNC} % (fold)
+\label{sec:modelisation_d_automates_en_fnc_}
+
+Afin de modéliser un automate en FNC, il faut tout d'abord définir les variables qui seront utilisées. 
+Pour cela, nous avons décidé de créer une variable par état de l'automate, et une variable par transition. 
+Ainsi, pour un automate à $n$ états et $m$ transitions, nous aurons $n+m$ variables. 
+
+\subsection{Variables} % (fold)
+\label{sub:variables}
+
+\subsubsection{Variables d'états} % (fold) 
+\label{ssub:variables_d_etats} 
+
+Les variables d'états sont des variables booléennes qui représentent l'état dans lequel se trouve l'automate. 
+Ainsi, pour un automate à $n$ états, nous aurons $n$ variables d'états. 
+Ces variables sont nommées $S_i$ avec $i \in \{1, \dots, n\}$. 
+La variable $S_i$ est vraie si et seulement si l'automate est dans l'état $i$.
+
+% subsection Variables (end)
+
+
+
+% section Modelisation d'automates en FNC (end)
+
+
+
+
+
+
+
+
+
+
+%================= Bibliography ========================
+% \newpage
+% \phantomsection % Required if hyperref is used
+% \addcontentsline{toc}{section}{References} % Adding bibliography to table of contents
+% \printbibliography % Print the bibliography
+
+\end{document}
