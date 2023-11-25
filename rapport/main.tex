@@ -32,22 +32,64 @@
 \section{Modelisation d'automates en FNC} % (fold)
 \label{sec:modelisation_d_automates_en_fnc_}
 
+% Sachant qu'il existe les ensemble $P$ et $N$ qui représentent respectivement 
+% les états acceptants et non-acceptants d'un automate, nous avons décidé de 
+% modéliser un automate en FNC de la manière suivante :
+
+Voici quelques notations que nous utiliserons dans la suite de ce rapport : 
+\begin{itemize}[label=$\bullet$]
+    \item $P$ représente l'ensemble des mots acceptés par l'automate 
+    \item $N$ représente l'ensemble des mots non-acceptés par l'automate 
+    \item $\Sigma$ représente l'alphabet de l'automate 
+    \item $k$ représente le nombre au plus d'états de l'automate
+\end{itemize}
+
 Afin de modéliser un automate en FNC, il faut tout d'abord définir les variables qui seront utilisées. 
 Pour cela, nous avons décidé de créer une variable par état de l'automate, et une variable par transition. 
 Ainsi, pour un automate à $n$ états et $m$ transitions, nous aurons $n+m$ variables. 
 
-\subsection{Variables} % (fold)
-\label{sub:variables}
+\subsection{Choix des variables} % (fold)
+\label{sub:choix_des_variables}
 
-\subsubsection{Variables d'états} % (fold) 
-\label{ssub:variables_d_etats} 
+\subsubsection{Etats} % (fold)
+\label{sec:etats}
 
-Les variables d'états sont des variables booléennes qui représentent l'état dans lequel se trouve l'automate. 
-Ainsi, pour un automate à $n$ états, nous aurons $n$ variables d'états. 
-Ces variables sont nommées $S_i$ avec $i \in \{1, \dots, n\}$. 
-La variable $S_i$ est vraie si et seulement si l'automate est dans l'état $i$.
+Nous définissons notre ensemble $Q = \{q_0, q_1, \dots, q_n\}$, qui 
+représente l'ensemble des états de l'automate. Sachant que $n \le k$, nous 
+pouvons définir les variables $e_i$ comme suit : 
+\begin{itemize}[label=$\bullet$]
+    \item $q_i = 1$ si l'état $i$ est acceptant 
+    \item $q_i = 0$ si l'état $i$ est non-acceptant 
+\end{itemize}
 
-% subsection Variables (end)
+% subsubsection Etats (end)
+
+\subsubsection{Transitions} % (fold) 
+\label{sec:transitions} 
+
+Nous définissons notre ensemble $T = \{t_1, t_2, \dots, t_m\}$, qui représente 
+l'ensemble des transitions de l'automate ou $t_i$ représente le $i$-ème lettre de 
+l'alphabet. 
+Nous pouvons définir les variables $t_i$ comme suit : 
+\begin{itemize}[label=$\bullet$]
+    \item $t_i = 1$ si la transition $i$ est utilisée 
+    \item $t_i = 0$ si la transition $i$ n'est pas utilisée 
+\end{itemize}
+
+\subsection{Contraintes} % (fold)
+\label{sub:contraintes}
+
+\begin{itemize}
+    \item Il faut qu'il y ait un et un seul état initial 
+    \item Il faut qu'il y ait au moins un état final
+    \item Il faut que l'ensemble $P$ soit inclus dans l'ensemble des mots acceptés par l'automate 
+    \item Un mot se trouvant dans l'ensemble $N$ ne peut pas se trouver dans l'ensemble $P$ 
+\end{itemize}
+% subsection Contraintes (end)
+
+
+
+% subsection Choix des variables (end)
 
 
 
