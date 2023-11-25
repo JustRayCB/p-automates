@@ -54,9 +54,9 @@ Ainsi, pour un automate à $n$ états et $m$ transitions, nous aurons $n+m$ vari
 \subsubsection{Etats} % (fold)
 \label{sec:etats}
 
-Nous définissons notre ensemble $Q = \{q_0, q_1, \dots, q_n\}$, qui 
-représente l'ensemble des états de l'automate. Sachant que $n \le k$, nous 
-pouvons définir les variables $e_i$ comme suit : 
+Nous définissons notre ensemble $Q = \{q_0, q_1, \dots, q_n | n \le k\}$, qui 
+représente l'ensemble des états de l'automate. Posons $q_0$ comme l'état initial.
+Nous pouvons définir les variables $e_i$ comme suit : 
 \begin{itemize}[label=$\bullet$]
     \item $q_i = 1$ si l'état $i$ est acceptant 
     \item $q_i = 0$ si l'état $i$ est non-acceptant 
@@ -67,14 +67,14 @@ pouvons définir les variables $e_i$ comme suit :
 \subsubsection{Transitions} % (fold) 
 \label{sec:transitions} 
 
-Nous définissons notre ensemble $T = \{t_1, t_2, \dots, t_m\}$, qui représente 
-l'ensemble des transitions de l'automate ou $t_i$ représente le $i$-ème lettre de 
-l'alphabet. 
-Nous pouvons définir les variables $t_i$ comme suit : 
+
+Nous définissons notre ensemble $\delta = \{d_{i, j, s_i} | i, j \in Q, s_i \in \Sigma\}$, qui 
+représente l'ensemble des transitions de l'automate. 
+Nous pouvons définir les variables $d_{i, j, s_i}$ comme suit : 
 \begin{itemize}[label=$\bullet$]
-    \item $t_i = 1$ si la transition $i$ est utilisée 
-    \item $t_i = 0$ si la transition $i$ n'est pas utilisée 
-\end{itemize}
+    \item $d_{i, j, s_i} = 1$ si la transition avec le symbole $s_i$ existe entre l'état $i$ et l'état $j$ 
+    \item $d_{i, j, s_i} = 0$ si la transition avec le symbole $s_i$ n'existe pas entre l'état $i$ et l'état $j$ 
+\end{itemize} 
 
 \subsection{Contraintes} % (fold)
 \label{sub:contraintes}
