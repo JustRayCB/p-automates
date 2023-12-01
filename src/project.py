@@ -70,14 +70,14 @@ def gen_aut(alphabet: str, pos: list[str], neg: list[str], k: int) -> DFA:
                     # Si i va vers j avec la lettre letter alors i ne peut pas aller vers l avec la lettre letter
                     cnf.append([-vpools.id((i, letter, j)), -vpools.id((i, letter, l))])
 
-    # Il faut que l’ensemble des mots positifs soit inclus dans l’ensemble des mots acceptés par l’automate
+    # Il faut que l’ensemble des mots positifs soient inclus dans l’ensemble des mots acceptés par l’automate
     for word in pos:
         idx = 0
         size = len(word)
         if word == "":
             # Si le mot est vide alors l'état 0 doit être acceptant
-            cnf.append(vpools.id((states[0], acceptation[AOI], initial[AOI])))
-            cnf.append(-vpools.id((states[0], acceptation[NAOI], initial[AOI])))
+            cnf.append([vpools.id((states[0], acceptation[AOI], initial[AOI]))])
+            cnf.append([-vpools.id((states[0], acceptation[NAOI], initial[AOI]))])
         for char in word:
             if char not in alphabet:
                 raise Exception(
@@ -130,8 +130,8 @@ def gen_aut(alphabet: str, pos: list[str], neg: list[str], k: int) -> DFA:
         size = len(word)
         if word == "":
             # Si le mot est vide alors l'état 0 ne doit pas être acceptant
-            cnf.append(-vpools.id((states[0], acceptation[AOI], initial[AOI])))
-            cnf.append(vpools.id((states[0], acceptation[NAOI], initial[AOI])))
+            cnf.append([-vpools.id((states[0], acceptation[AOI], initial[AOI]))])
+            cnf.append([vpools.id((states[0], acceptation[NAOI], initial[AOI]))])
         for char in word:
             if word[: idx + 1] in pos:
                 if idx == 0:
