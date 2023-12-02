@@ -260,6 +260,11 @@ def gen_aut(alphabet: str, pos: list[str], neg: list[str], k: int) -> DFA:
             for init in initial:
                 if vpools.id((i, a, init)) in model:
                     print("Q" + str(i) + " " + a + " " + init)
+    for i in states:
+        for letter in alphabet:
+            for j in states:
+                if vpools.id((i, letter, j)) in model:
+                    print("Q" + str(i) + " -" + letter + "-> Q" + str(j))
     return None
 
 
