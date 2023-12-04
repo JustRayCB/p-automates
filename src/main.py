@@ -17,5 +17,7 @@ from utils import show_automaton
 #
 # show_automaton(dfa)
 t = ("a", ["", "aa", "aaaaaa"], ["a", "aaa", "aaaaa"], 2)
+# t = ("ab", ["", "a", "aa", "aaa", "aaaa"], ["b", "ab", "ba", "bab", "aba"], 1)
+# t = ("ab", ["b", "ab", "ba", "abbb", "abba"], ["", "aaa", "a", "aa"], 2)  #
 
 gen_aut(t[0], t[1], t[2], t[3])

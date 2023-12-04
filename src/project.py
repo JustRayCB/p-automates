@@ -113,6 +113,8 @@ def gen_aut(alphabet: str, pos: list[str], neg: list[str], k: int) -> DFA:
                         cnf.append([-vpools.id((i, letter, j)), -vpools.id((i, letter, l))])
 
     # Il faut que l’ensemble des mots positifs soient inclus dans l’ensemble des mots acceptés par l’automate
+    print(cnf.clauses)
+    print("Before starting transitions : ", len(cnf.clauses))
     for word in pos:
         idx = 0
         size = len(word)
@@ -130,45 +132,73 @@ def gen_aut(alphabet: str, pos: list[str], neg: list[str], k: int) -> DFA:
                 for j in states:
                     if idx == size - 1:
                         # Si c'est le dernier caractère du mot alors l'état de la transition doit être acceptant
-                        if j != 1:
-                            cnf.append(
-                                [
-                                    -vpools.id((states[0], char, j)),
-                                    vpools.id((j, acceptation[AOI], initial[NAOI])),
-                                ]
-                            )
+                        for init in initial:
+                            if j == 1 and init == "non-initial":
+                                continue
+                            elif init == "initial" and j != 1:
+                                continue
+                            else:
+                                cnf.append(
+                                    [
+                                        -vpools.id((states[0], char, j)),
+                                        vpools.id((j, acceptation[AOI], init)),
+                                    ]
+                                )
                     else:
                         # Sinon l'état de la transition doit être non acceptant
-                        if j != 1:
-                            cnf.append(
-                                [
-                                    -vpools.id((states[0], char, j)),
-                                    vpools.id((j, acceptation[NAOI], initial[NAOI])),
-                                ]
-                            )
+                        for init in initial:
+                            if j == 1 and init == "non-initial":
+                                continue
+                            elif init == "initial" and j != 1:
+                                continue
+                            else:
+                                cnf.append(
+                                    [
+                                        -vpools.id((states[0], char, j)),
+                                        vpools.id((j, acceptation[NAOI], init)),
+                                    ]
+                                )
+                print("Find first char ", len(cnf.clauses))
+                print(cnf.clauses)
             else:
                 for j in states:
                     if idx == size - 1:
                         for l in states:
                             # Si l'état j va vers l avec la lettre char alors l'état l doit être acceptant et non initial
-                            if l != 1:
-                                cnf.append(
-                                    [
-                                        -vpools.id((j, char, l)),
-                                        vpools.id((l, acceptation[AOI], initial[NAOI])),
-                                    ]
-                                )
+                            for init in initial:
+                                if l == 1 and init == "non-initial":
+                                    continue
+                                elif init == "initial" and l != 1:
+                                    continue
+                                else:
+                                    cnf.append(
+                                        [
+                                            -vpools.id((j, char, l)),
+                                            vpools.id((l, acceptation[AOI], init)),
+                                        ]
+                                    )
                     else:
                         for l in states:
-                            if l != 1:
+                            for init in initial:
                                 # S'il existe un état j qui va vers l avec la lettre char alors l'état j doit être dans l'automate étant non acceptant et non initial
-                                cnf.append(
-                                    [
-                                        -vpools.id((j, char, l)),
-                                        vpools.id((l, acceptation[NAOI], initial[NAOI])),
-                                    ]
-                                )
+                                if l == 1 and init == "non-initial":
+                                    continue
+                                elif init == "initial" and l != 1:
+                                    continue
+                                else:
+                                    cnf.append(
+                                        [
+                                            -vpools.id((j, char, l)),
+                                            vpools.id((l, acceptation[NAOI], init)),
+                                        ]
+                                    )
             idx += 1
+        print("End of the word : ", word, " := ", len(cnf.clauses))
+        print(cnf.clauses)
+
+    print("============after first part transitions : ", len(cnf.clauses), "==========")
+    print(cnf.clauses)
+    print("===================")
 
     # Il faut que l’ensemble des mots négatif ne soit pas inclus dans l’ensemble des mots acceptés par l’automate
     for word in neg:
@@ -180,69 +210,75 @@ def gen_aut(alphabet: str, pos: list[str], neg: list[str], k: int) -> DFA:
             cnf.append([vpools.id((states[0], acceptation[NAOI], initial[AOI]))])
         for char in word:
             if word[: idx + 1] in pos:
+                continue
+            else:
+                # Si c'est le premier caractère du mot alors l'état 0 doit aller vers un état avec la lettre char
                 if idx == 0:
-                    # Si c'est le premier caractère du mot alors l'état 0 doit aller vers un état avec la lettre char
                     for j in states:
                         if idx == size - 1:
-                            # Si c'est le dernier caractère du mot alors l'état de la transition doit être acceptant
-                            if j != 1:
-                                cnf.append(
-                                    [
-                                        -vpools.id((states[0], char, j)),
-                                        vpools.id((j, acceptation[AOI], initial[NAOI])),
-                                    ]
-                                )
+                            # Si c'est le dernier caractère du mot alors l'état de la transition doit être non acceptant
+                            for init in initial:
+                                if j == 1 and init == "non-initial":
+                                    continue
+                                elif init == "initial" and j != 1:
+                                    continue
+                                else:
+                                    cnf.append(
+                                        [
+                                            -vpools.id((states[0], char, j)),
+                                            vpools.id((j, acceptation[NAOI], init)),
+                                        ]
+                                    )
                         else:
                             # Sinon l'état de la transition doit être non acceptant
-                            if j != 1:
-                                cnf.append(
-                                    [
-                                        -vpools.id((states[0], char, j)),
-                                        vpools.id((j, acceptation[NAOI], initial[NAOI])),
-                                    ]
-                                )
+                            for init in initial:
+                                if j == 1 and init == "non-initial":
+                                    continue
+                                elif init == "initial" and j != 1:
+                                    continue
+                                else:
+                                    cnf.append(
+                                        [
+                                            -vpools.id((states[0], char, j)),
+                                            vpools.id((j, acceptation[NAOI], init)),
+                                        ]
+                                    )
                 else:
                     for j in states:
                         if idx == size - 1:
                             for l in states:
-                                # Si l'état j va vers l avec la lettre char alors l'état l doit être acceptant et non initial
-                                if l != 1:
-                                    cnf.append(
-                                        [
-                                            -vpools.id((j, char, l)),
-                                            vpools.id((l, acceptation[AOI], initial[NAOI])),
-                                        ]
-                                    )
+                                # Si l'état j va vers l avec la lettre char alors l'état l doit être non acceptant et non initial
+                                for init in initial:
+                                    if l == 1 and init == "non-initial":
+                                        continue
+                                    elif init == "initial" and l != 1:
+                                        continue
+                                    else:
+                                        cnf.append(
+                                            [
+                                                -vpools.id((j, char, l)),
+                                                vpools.id((l, acceptation[NAOI], init)),
+                                            ]
+                                        )
                         else:
                             for l in states:
-                                # S'il existe un état j qui va vers l avec la lettre char alors l'état j doit être dans l'automate étant non acceptant et non initial
-                                if l != 1:
-                                    cnf.append(
-                                        [
-                                            -vpools.id((j, char, l)),
-                                            vpools.id((l, acceptation[NAOI], initial[NAOI])),
-                                        ]
-                                    )
-            else:
-                # Si c'est le premier caractère du mot alors l'état 0 doit aller vers un état avec la lettre char
-                for j in states:
-                    # S'Il y a l'état 0 qui va vers un état avec la lettre char alors il n'existe pas d'état j acceptant et non initial
-                    if j != 1:
-                        cnf.append(
-                            [
-                                vpools.id((states[0], char, j)),
-                                -vpools.id((j, acceptation[AOI], initial[NAOI])),
-                            ]
-                        )
-                        cnf.append(
-                            [
-                                vpools.id((states[0], char, j)),
-                                vpools.id((j, acceptation[NAOI], initial[NAOI])),
-                            ]
-                        )
+                                for init in initial:
+                                    # S'il existe un état j qui va vers l avec la lettre char alors l'état j doit être dans l'automate étant non acceptant et non initial
+                                    if l == 1 and init == "non-initial":
+                                        continue
+                                    elif init == "initial" and l != 1:
+                                        continue
+                                    else:
+                                        cnf.append(
+                                            [
+                                                -vpools.id((j, char, l)),
+                                                vpools.id((l, acceptation[NAOI], init)),
+                                            ]
+                                        )
+
             idx += 1
 
-    print("Clauses construites:\n")
+    print("Clauses construites:\n", len(cnf.clauses))
     print(cnf.clauses)  # pour afficher les clauses
     print("\n")
     # On résout le problème SAT
