@@ -113,14 +113,35 @@ def gen_aut(alphabet: str, pos: list[str], neg: list[str], k: int) -> DFA:
         if word == "":
             cnf.append([vpools.id((states[0], acceptation[A]))])
             cnf.append([-vpools.id((states[0], acceptation[NA]))])
-        for idx, char in enumerate(word):
+        for t in range(len(word)):
+            if t == 0:
+                cnf.append([vpools.id((states[0], acceptation[A]))])
+                cnf.append([-vpools.id((states[0], acceptation[NA]))])
             for i in states:
-                for j in states: 
-
-
-
-
-
+                for j in states:
+                    if j != i:
+                        cnf.append(
+                            [
+                                -vpools.id((i, word[t], j)),
+                                vpools.id((i, acceptation[A])),
+                                vpools.id((i, acceptation[NA])),
+                            ]
+                        )
+                        cnf.append(
+                            [
+                                -vpools.id((i, word[t], j)),
+                                vpools.id((j, acceptation[A])),
+                                vpools.id((j, acceptation[NA])),
+                            ]
+                        )
+        for i in states:
+            cnf.append(
+                [
+                    -vpools.id((i, acceptation[A])),
+                    -vpools.id((i, acceptation[NA])),
+                ]
+            )
+    # Il faut que l’ensemble des mots négatifs soient exclus de l’ensemble des mots acceptés par l’automate
 
 
 # Q3
