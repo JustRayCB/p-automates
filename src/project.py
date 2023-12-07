@@ -108,40 +108,60 @@ def gen_aut(alphabet: str, pos: list[str], neg: list[str], k: int) -> DFA:
                         vpools.id((j, acceptation[NA])),
                     ]
                 )
+    for word in pos:
+        for j in states:
+            cnf.append([-vpools.id((word, j, len(word) - 1)), vpools.id((j, acceptation[A]))])
+
     # Il faut que l’ensemble des mots positifs soient inclus dans l’ensemble des mots acceptés par l’automate
     for word in pos:
         if word == "":
             cnf.append([vpools.id((states[0], acceptation[A]))])
             cnf.append([-vpools.id((states[0], acceptation[NA]))])
         for t in range(len(word)):
-            if t == 0:
-                cnf.append([vpools.id((states[0], acceptation[A]))])
-                cnf.append([-vpools.id((states[0], acceptation[NA]))])
             for i in states:
                 for j in states:
-                    if j != i:
-                        cnf.append(
-                            [
-                                -vpools.id((i, word[t], j)),
-                                vpools.id((i, acceptation[A])),
-                                vpools.id((i, acceptation[NA])),
-                            ]
-                        )
-                        cnf.append(
-                            [
-                                -vpools.id((i, word[t], j)),
-                                vpools.id((j, acceptation[A])),
-                                vpools.id((j, acceptation[NA])),
-                            ]
-                        )
-        for i in states:
-            cnf.append(
-                [
-                    -vpools.id((i, acceptation[A])),
-                    -vpools.id((i, acceptation[NA])),
-                ]
-            )
+                    cnf.append([-vpools.id((word, i, t)), vpools.id((i, word[t], j))])
+                    # Si il y a une éxécution du mot word à l'étape t tu mots qui se trouve sur l'état i
+                    # alors il y a une transition de i à j pour la lettre word[t]
+
+    for word in pos:
+        # Eijt
+        for t in range(len(word)):
+            d = []
+            for j in states:
+                d.append(vpools.id((word, j, t)))
+            cnf.append(d)
+
     # Il faut que l’ensemble des mots négatifs soient exclus de l’ensemble des mots acceptés par l’automate
+    for word in neg:
+        if word == "":
+            cnf.append([vpools.id((states[0], acceptation[NA]))])
+            cnf.append([-vpools.id((states[0], acceptation[A]))])
+        for t in range(len(word)):
+            for i in states:
+                for j in states:
+                    cnf.append([-vpools.id((word, i, t)), vpools.id((i, word[t], j))])
+                cnf.append([-vpools.id((word, i, len(word) - 1)), vpools.id((i, acceptation[NA]))])
+
+    print("Clauses construites:\n", len(cnf.clauses))
+    print(cnf.clauses)  # pour afficher les clauses
+    print("\n")
+    # On résout le problème SAT
+    solver = Minisat22()
+    solver.append_formula(cnf.clauses, no_return=False)
+    print("Resolution...")
+    resultat = solver.solve()
+    print("satisfaisable : " + str(resultat))
+    print("\n")
+    print("Interpretation :")
+    model = solver.get_model()
+    print(model)
+    # for i in states:
+    #     for accept in acceptation:
+    #         if vpools.id((i, accept)) in model:
+    #             print("Q" + str(i) + " " + accept + " : ")
+
+    # return None
 
 
 # Q3
