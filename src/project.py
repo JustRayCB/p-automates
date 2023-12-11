@@ -38,7 +38,7 @@ def variable_names(alphabet: str, k: int, vpools, pos, neg) -> dict:
                     + str(t)
                     + ") sur le mot "
                     + word
-                    + "positif"
+                    + " positif"
                 )
 
     for word in neg:
@@ -76,7 +76,6 @@ def gen_aut(alphabet: str, pos: list[str], neg: list[str], k: int) -> DFA:
     # initial = ["non-initial", "initial"]  # 1:= Pas Initial, 2:= Initial
     NA = 0  # Non Acceptant et Non Initial
     A = 1  # Acceptant et Initial
-    nb_transition = len(alphabet)
     varnames = variable_names(alphabet, k, vpools, pos, neg)
     # display keys and values
     for key, value in varnames.items():
@@ -141,40 +140,20 @@ def gen_aut(alphabet: str, pos: list[str], neg: list[str], k: int) -> DFA:
         for t in range(len(word) - 1):
             for i in states:
                 for j in states:
-                    # ¬ X(m, i, j, t+1) ∨ d(i, m[t+1], j)
-                    cnf.append([-vpools.id((word, i, j, t + 1)), vpools.id((i, word[t + 1], j))])
-                    # ¬ d(i, m[t+1], j) ∨ X(m, i, j, t+1)
-                    cnf.append([vpools.id((word, i, j, t + 1)), -vpools.id((i, word[t + 1], j))])
-                    # ¬ X(m, i, j, t+1) ∨ E(m, i, t)
-                    cnf.append([-vpools.id((word, i, j, t + 1)), vpools.id((word, i, t))])
-                    # ¬ X(m, i, j, t+1) ∨ E(m, j, t+1)
-                    cnf.append([-vpools.id((word, i, j, t + 1)), vpools.id((word, j, t + 1))])
-                    # ¬ E(m, i, t) ∨ ¬ E(m, j, t+1) ∨ X(m, i, j, t+1)
-                    cnf.append(
-                        [
-                            -vpools.id((word, i, t)),
-                            -vpools.id((word, j, t + 1)),
-                            vpools.id((word, i, j, t + 1)),
-                        ]
-                    )
-
-    # Toutes les exécutions pour les mots positifs doivent exister
-    for word in pos:
-        # Eijt,
-        for t in range(len(word)):
-            d = []
-            for j in states:
-                d.append(vpools.id((word, j, t)))
-            cnf.append(d)
-
-    # # Il faut que l’ensemble des mots négatifs soient exclus de l’ensemble des mots acceptés par l’automate
-    for word in neg:
-        if word == "":
-            cnf.append([vpools.id((states[0], acceptation[NA]))])
-            cnf.append([-vpools.id((states[0], acceptation[A]))])
-        for t in range(len(word) - 1):
-            for i in states:
-                for j in states:
+                    # cnf.append(
+                    #     [
+                    #         -vpools.id((word, i, t)),
+                    #         -vpools.id((i, word[t], j)),
+                    #         vpools.id((word, j, t + 1)),
+                    #     ]
+                    # )
+                    # cnf.append(
+                    #     [
+                    #         -vpools.id((word, i, t)),
+                    #         -vpools.id((word, j, t + 1)),
+                    #         vpools.id((i, word[t], j)),
+                    #     ]
+                    # )
                     cnf.append(
                         [
                             vpools.id((i, word[t], j)),
@@ -184,6 +163,41 @@ def gen_aut(alphabet: str, pos: list[str], neg: list[str], k: int) -> DFA:
                     )
                     cnf.append([-vpools.id((i, word[t], j)), vpools.id((word, i, t))])
                     cnf.append([-vpools.id((i, word[t], j)), vpools.id((word, j, t + 1))])
+
+    # Toutes les exécutions pour les mots positifs doivent exister
+    for word in pos:
+        # Eijt,
+        for t in range(len(word)):
+            d = []
+            for j in states:
+                d.append(vpools.id((word, j, t)))
+            cnf.append(d)
+    #
+    for word in neg:
+        if word == "":
+            cnf.append([vpools.id((states[0], acceptation[NA]))])
+            cnf.append([-vpools.id((states[0], acceptation[A]))])
+        for j in states:
+            if word != "":
+                cnf.append([-vpools.id((word, j, len(word) - 1)), vpools.id((j, acceptation[NA]))])
+
+    # # Il faut que l’ensemble des mots négatifs soient exclus de l’ensemble des mots acceptés par l’automate
+    # for word in neg:
+    #     if word == "":
+    #         cnf.append([vpools.id((states[0], acceptation[NA]))])
+    #         cnf.append([-vpools.id((states[0], acceptation[A]))])
+    #     for t in range(len(word) - 1):
+    #         for i in states:
+    #             for j in states:
+    #                 cnf.append(
+    #                     [
+    #                         vpools.id((i, word[t], j)),
+    #                         -vpools.id((word, i, t)),
+    #                         vpools.id((word, j, t + 1)),
+    #                     ]
+    #                 )
+    #                 cnf.append([-vpools.id((i, word[t], j)), vpools.id((word, i, t))])
+    #                 cnf.append([-vpools.id((i, word[t], j)), -vpools.id((word, j, t + 1))])
 
     print("Clauses construites:\n", len(cnf.clauses))
     print(cnf.clauses)  # pour afficher les clauses
