@@ -142,13 +142,13 @@ def gen_aut(alphabet: str, pos: list[str], neg: list[str], k: int) -> DFA:
             for i in states:
                 for j in states:
                     # ¬ X(m, i, j, t+1) ∨ d(i, m[t+1], j)
-                    cnf.append([-vpools.id((word, i, j, t + 1), vpools.id((i, word[t + 1], j)))])
+                    cnf.append([-vpools.id((word, i, j, t + 1)), vpools.id((i, word[t + 1], j))])
                     # ¬ d(i, m[t+1], j) ∨ X(m, i, j, t+1)
-                    cnf.append([vpools.id((word, i, j, t + 1), -vpools.id((i, word[t + 1], j)))])
+                    cnf.append([vpools.id((word, i, j, t + 1)), -vpools.id((i, word[t + 1], j))])
                     # ¬ X(m, i, j, t+1) ∨ E(m, i, t)
-                    cnf.append([-vpools.id((word, i, j, t + 1), vpools.id((word, i, t)))])
+                    cnf.append([-vpools.id((word, i, j, t + 1)), vpools.id((word, i, t))])
                     # ¬ X(m, i, j, t+1) ∨ E(m, j, t+1)
-                    cnf.append([-vpools.id((word, i, j, t + 1), vpools.id((word, j, t + 1)))])
+                    cnf.append([-vpools.id((word, i, j, t + 1)), vpools.id((word, j, t + 1))])
                     # ¬ E(m, i, t) ∨ ¬ E(m, j, t+1) ∨ X(m, i, j, t+1)
                     cnf.append(
                         [
@@ -172,11 +172,18 @@ def gen_aut(alphabet: str, pos: list[str], neg: list[str], k: int) -> DFA:
         if word == "":
             cnf.append([vpools.id((states[0], acceptation[NA]))])
             cnf.append([-vpools.id((states[0], acceptation[A]))])
-        for t in range(len(word)):
+        for t in range(len(word) - 1):
             for i in states:
                 for j in states:
-                    cnf.append([-vpools.id((word, i, t)), vpools.id((j, word[t], i))])
-                cnf.append([-vpools.id((word, i, len(word) - 1)), vpools.id((i, acceptation[NA]))])
+                    cnf.append(
+                        [
+                            vpools.id((i, word[t], j)),
+                            -vpools.id((word, i, t)),
+                            -vpools.id((word, j, t + 1)),
+                        ]
+                    )
+                    cnf.append([-vpools.id((i, word[t], j)), vpools.id((word, i, t))])
+                    cnf.append([-vpools.id((i, word[t], j)), vpools.id((word, j, t + 1))])
 
     print("Clauses construites:\n", len(cnf.clauses))
     print(cnf.clauses)  # pour afficher les clauses
