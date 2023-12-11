@@ -72,10 +72,10 @@ def gen_aut(alphabet: str, pos: list[str], neg: list[str], k: int) -> DFA:
     for key, value in varnames.items():
         print(key, value)
 
-    # Il y a un unique état initial
+    # 1. Il y a un unique état initial
     cnf.append([vpools.id((states[0], acceptant[A])), vpools.id((states[0], acceptant[NA]))])
 
-    # Un état est exclusivement acceptant ou non-acceptant
+    # 2. Un état est exclusivement acceptant ou non-acceptant
     for i in states:
         cnf.append(
             [
@@ -84,17 +84,11 @@ def gen_aut(alphabet: str, pos: list[str], neg: list[str], k: int) -> DFA:
             ]
         )
 
-    # Chaque état est acceptant ou non-acceptant
+    # 3. Chaque état est acceptant ou non-acceptant
     for i in states:
         cnf.append([vpools.id((i, acceptant[A])), vpools.id((i, acceptant[NA]))])
 
-    # Il y a au moins un état acceptant
-    # d = []
-    # for i in states:
-    #     d.append(vpools.id((i, acceptant[A])))
-    # cnf.append(d)
-
-    # Chaque état a au plus une transition par lettre de l'alphabet
+    # 4. Chaque état a au plus une transition par lettre de l'alphabet
     for i in states:
         for j in states:
             for k in states:
@@ -108,7 +102,7 @@ def gen_aut(alphabet: str, pos: list[str], neg: list[str], k: int) -> DFA:
                         )
 
 
-    # S'il y a une transition pour la lettre l d'un état i à un état j, alors i et
+    # 5. S'il y a une transition pour la lettre l d'un état i à un état j, alors i et
     # j sont des états existants
     for i in states:
         for j in states:
@@ -129,7 +123,7 @@ def gen_aut(alphabet: str, pos: list[str], neg: list[str], k: int) -> DFA:
                         ]
                     )
     
-    # Un état i est acceptant si et seulement s'il existe une exécution d'un mot m de P qui se termine 
+    # 6. Un état i est acceptant si et seulement s'il existe une exécution d'un mot m de P qui se termine 
     # sur i à l'étape t = len(m) - 1
     for word in pos:
         for i in states:
@@ -138,34 +132,89 @@ def gen_aut(alphabet: str, pos: list[str], neg: list[str], k: int) -> DFA:
             else:
                 cnf.append([vpools.id((states[0], acceptant[A]))])
 
-    # Si on a une exécution pour le mot m à l'étape t sur l'état i et une transition de i vers j pour la lettre l,
+    # 7. Si on a une exécution pour le mot m à l'étape t sur l'état i et une transition de i vers j pour la lettre l,
     # alors, on a une exécution pour le mot m à l'étape t+1 sur l'état j.
+    # ------------------------ PAS SSI ------------------------
+    # for word in pos:
+    #     for t in range(len(word)):
+    #         for i in states:
+    #             for j in states:
+    #                     cnf.append(
+    #                         [
+    #                             -vpools.id((word, i, t-1)),
+    #                             -vpools.id((i, word[t], j)),
+    #                             vpools.id((word, j, t)),
+    #                         ]
+    #                     )
+    
+    # ------------------------ SSI ------------------------
     for word in pos:
-        for t in range(len(word)-1):
+        for t in range(len(word)):
             for i in states:
                 for j in states:
                         cnf.append(
                             [
-                                -vpools.id((word, i, t)),
-                                -vpools.id((i, word[t+1], j)),
-                                vpools.id((word, j, t + 1)),
+                                -vpools.id((word, i, t-1)),
+                                -vpools.id((i, word[t], j)),
+                                vpools.id((word, j, t)),
+                            ]
+                        )
+                        cnf.append(
+                            [
+                                -vpools.id((word, j, t)),
+                                -vpools.id((word, i, t-1)),
+                            ]
+                        )
+                        cnf.append(
+                            [
+                                -vpools.id((word, j, t)),
+                                vpools.id((i, word[t], j)),
                             ]
                         )
 
-    # Si on a une exécution pour le mot m à l'étape t sur l'état i et une exécution pour le même mot m à l'étape t+1
+
+    # 8. Si on a une exécution pour le mot m à l'étape t sur l'état i et une exécution pour le même mot m à l'étape t+1
     # sur l'état j, alors il existe une transition de i vers j pour la lettre l.
+    # ------------------------ PAS SSI ------------------------
     for word in pos:
-        for t in range(len(word)-1):
+        for t in range(len(word)):
             for i in states:
                 for j in states:
                         cnf.append(
                             [
-                                -vpools.id((word, i, t)),
-                                -vpools.id((word, j, t+1)),
-                                vpools.id((i, word[t+1], j)),
+                                -vpools.id((word, i, t-1)),
+                                -vpools.id((word, j, t)),
+                                vpools.id((i, word[t], j)),
                             ]
                         )
-    # Toutes les exécutions de N doivent finir sur un état non-acceptant
+                        cnf.append(
+                            [
+                                -vpools.id((i, word[t], j)),
+                                vpools.id((word, i, t-1)),
+                            ]
+                        )
+                        cnf.append(
+                            [
+                                -vpools.id((i, word[t], j)),
+                                vpools.id((word, j, t)),
+                            ]
+                        )
+
+
+    # ------------------------ SSI ------------------------
+    # for word in pos:
+    #     for t in range(len(word)):
+    #         for i in states:
+    #             for j in states:
+    #                     cnf.append(
+    #                         [
+    #                             -vpools.id((word, i, t-1)),
+    #                             -vpools.id((word, j, t)),
+    #                             vpools.id((i, word[t], j)),
+    #                         ]
+    #                     )
+    
+    # 9. Toutes les exécutions de N doivent finir sur un état non-acceptant
     for word in neg:
         for i in states:
             if word != "":
@@ -173,12 +222,18 @@ def gen_aut(alphabet: str, pos: list[str], neg: list[str], k: int) -> DFA:
             else:
                 cnf.append([vpools.id((states[0], acceptant[NA]))])
     
-    # Toutes les exécutions doivent commencer à l'état initial
+    # 10. Toutes les exécutions doivent commencer à l'état initial
     all_words = neg + pos
     for word in all_words:
-        cnf.append([vpools.id((word, states[0], 0))])
-    
-    
+        cnf.append([vpools.id((word, states[0], -1))])
+
+    # 11. Toutes les exécutions sur P doivent exister 
+    for word in pos:
+        for t in range(len(word)):
+            d = []
+            for i in states:
+                d.append(vpools.id((word, i, t-1)))    
+            cnf.append(d)
 
 
 
