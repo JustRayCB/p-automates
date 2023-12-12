@@ -28,7 +28,7 @@ def variable_names(alphabet: str, k: int, vpools, pos, neg) -> dict:
     return variables
 
 
-def _gen_aut(alphabet: str, pos: list[str], neg: list[str], k: int) -> Tuple[List | None, IDPool]:
+def _gen_aut(alphabet: str, pos: list[str], neg: list[str], k: int) -> Tuple[CNF, IDPool]:
     cnf = CNF()
     vpools = IDPool(start_from=1)
     acceptant = ["acceptant", "non-acceptant"]
@@ -126,19 +126,19 @@ def _gen_aut(alphabet: str, pos: list[str], neg: list[str], k: int) -> Tuple[Lis
                 d.append(vpools.id((word, i, t + 1)))
             cnf.append(d)
 
-    # On résout le problème SAT
-    solver = Minisat22()
-    solver.append_formula(cnf.clauses, no_return=False)
-    resultat = solver.solve()
-    model = solver.get_model()
-    return model, vpools
+    return cnf, vpools
 
 
 def gen_aut(alphabet: str, pos: list[str], neg: list[str], k: int) -> DFA | None:
-    acceptation = ["acceptant", "non-acceptant"]  # 1:= Non-Acceptant, 2:= Acceptant
+    acceptation = ["acceptant", "non-acceptant"]  # 1:= Acceptant, 2:= Non-Acceptant
     states = [nb for nb in range(1, k + 1)]
     A = 0
-    model, vpools = _gen_aut(alphabet, pos, neg, k)
+    cnf, vpools = _gen_aut(alphabet, pos, neg, k)
+    # On résout le problème SAT
+    solver = Minisat22()
+    solver.append_formula(cnf.clauses, no_return=False)
+    _ = solver.solve()
+    model = solver.get_model()
     if model is None:
         return None
     states_dfa = set()
