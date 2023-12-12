@@ -5,6 +5,7 @@ from inspect import getfullargspec
 from gen_aut import *
 from gen_autc import *
 from gen_autr import *
+from gen_minaut import *
 
 from automata.fa.fa import FA
 from automata.fa.dfa import DFA
