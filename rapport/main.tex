@@ -44,9 +44,10 @@ Voici quelques notations que nous utiliserons dans la suite de ce rapport :
     \item $k$ représente le nombre au plus d'états de l'automate
 \end{itemize}
 
-Afin de modéliser un automate en FNC, il faut tout d'abord définir les variables qui seront utilisées. 
-Pour cela, nous avons décidé de créer une variable par état de l'automate, et une variable par transition. 
-Ainsi, pour un automate à $n$ états et $m$ transitions, nous aurons $n+m$ variables. 
+\noindent Afin de modéliser un automate en FNC, il faut tout d'abord définir les variables qui seront 
+utilisées.Pour cela, nous avons décidé de créer une variable par état de l'automate, et une 
+variable par transition. Ainsi, pour un automate à $n$ états et $m$ transitions, nous aurons 
+$n+m$ variables. 
 
 \subsection{Choix des variables} % (fold)
 \label{sub:choix_des_variables}
@@ -54,129 +55,89 @@ Ainsi, pour un automate à $n$ états et $m$ transitions, nous aurons $n+m$ vari
 \subsubsection{Etats} % (fold)
 \label{sec:etats}
 
-Nous définissons notre ensemble $Q = \{q_0, q_1, \dots, q_n | n \le k\}$, qui 
-représente l'ensemble des états de l'automate. 
-Nous pouvons définir les variables $e_i$ comme suit : 
+Nous définissons notre ensemble $Q = \{q_{0a}, q_{0na}, \dots, q_{la}, q_{lna} | l \le k\}$, il y a
+donc $2k$ états dans $Q$ pour un automate à $k$ états. Nous pouvons définir les variables $q_i$ comme suit : 
 \begin{itemize}[label=$\bullet$]
-    \item $q_i = 1$ si l'état $i$ est acceptant 
-    \item $q_i = 0$ si l'état $i$ est non-acceptant 
+    \item $q_{ia} = 1$ si l'état $i$ est acceptant et donc $q_{ina} = 0$.
+    \item $q_{ina} = 1$ si l'état $i$ est non-acceptant et donc $q_{ia} = 0$.
 \end{itemize}
-
-\subsubsection{Etats initial} % (fold)
-\label{sec:etats_initial}
-
-Nous définissons notre ensemble $I = \{i_0, i_1, \dots, i_n | n \le k\}$, qui 
-représente l'ensemble des états initiaux de l'automate. 
-Nous pouvons définir les variables $i_i$ comme suit : 
-\begin{itemize}[label=$\bullet$]
-    \item $i_i = 1$ si l'état $i$ est initial 
-    \item $i_i = 0$ si l'état $i$ n'est pas initial 
-\end{itemize}
-
-% subsubsection Etats initial (end)
-
-% subsubsection Etats (end)
 
 \subsubsection{Transitions} % (fold) 
 \label{sec:transitions} 
 
-
-Nous définissons notre ensemble $\delta = \{d_{i, j, s_i} | i, j \in Q, s_i \in \Sigma\}$, qui 
+Nous définissons notre ensemble $\delta = \{d_{i, l, j} | i, j \in Q, l \in \Sigma\}$, qui 
 représente l'ensemble des transitions de l'automate. 
 Nous pouvons définir les variables $d_{i, j, s_i}$ comme suit : 
 \begin{itemize}[label=$\bullet$]
-    \item $d_{i, j, s_i} = 1$ si la transition avec le symbole $s_i$ existe entre l'état $i$ et l'état $j$ 
-    \item $d_{i, j, s_i} = 0$ si la transition avec le symbole $s_i$ n'existe pas entre l'état $i$ et l'état $j$ 
+    \item $d_{i, j, l} = 1$ si la transition avec la lettre $l$ existe entre l'état $i$ et l'état $j$.
+    \item $d_{i, j, l} = 0$ si la transition avec la lettre $l$ n'existe pas entre l'état $i$ et l'état $j$.
 \end{itemize} 
 
 % subsubsection Transitions (end) 
 
-\subsubsection{Exemples positifs} % (fold)
-\label{sec:exemples_positifs}
+\subsubsection{Exécutions}
+\label{sec:executions}
 
-Nous définissons $X_{p, i}$ comme étant la variable qui représente le fait que le mot $p$ est accepté par l'automate à l'état $q_i$.
-Nous pouvons définir les variables $X_{p, i}$ comme suit : 
+Nous définissons notre ensemble $E = \{e_{m, i, t} | i \in Q, t \in \{-1,\dots,\text{len}(m)\}\, m \in P \cup N\}$,
+qui représente l'ensemble des exécutions de l'automate. Nous pouvons définir les variables $e_{m, i, t}$ comme suit :
 \begin{itemize}[label=$\bullet$]
-    \item $X_{p, i} = 1$ si le mot $p$ est accepté par l'automate à l'état $q_i$ 
-    \item $X_{p, i} = 0$ si le mot $p$ n'est pas accepté par l'automate à l'état $q_i$ 
-\end{itemize}
-
-% subsubsection Exemples positifs (end)
-
-\subsubsection{Exemples négatifs} % (fold) 
-\label{sec:exemples_negatifs} 
-
-Nous définissons $Y_{n, i}$ comme étant la variable qui représente le fait que le mot $n$ n'est pas accepté par l'automate à l'état $q_i$. 
-
-Nous pouvons définir les variables $Y_{n, i}$ comme suit : 
-\begin{itemize}[label=$\bullet$]
-    \item $Y_{n, i} = 1$ si le mot $n$ n'est pas accepté par l'automate à l'état $q_i$ 
-    \item $Y_{n, i} = 0$ si le mot $n$ est accepté par l'automate à l'état $q_i$ 
+    \item $e_{m, i, t} = 1$ si l'automate est dans l'état $i$ après avoir lu les $t$ premières lettres du mot $m$.
+    \item $e_{m, i, t} = 0$ si l'automate n'est pas dans l'état $i$ après avoir lu les $t$ premières lettres du mot $m$.
 \end{itemize}
 
 
 \subsection{Contraintes} % (fold)
 \label{sub:contraintes}
 
-\begin{itemize}
-    \item Il faut qu'il y ait un et un seul état initial 
-    \item Il faut qu'il y ait au moins un état final
-    \item Il faut que l'ensemble $P$ soit inclus dans l'ensemble des mots acceptés par l'automate 
-    \item Un mot se trouvant dans l'ensemble $N$ ne peut pas être un état acceptant
-    \item Chaque état doit avoir toutes les transitions possibles. 
-\end{itemize}
-% subsection Contraintes (end)
-
-\subsection{FNC} % (fold) 
-\label{sub:fnc} 
-
-Voici les contraintes que nous avons définies pour modéliser un automate en FNC : 
-\begin{itemize}[label=$\bullet$]
-    \item Il faut qu'il y ait un et un seul état initial :
-    \begin{itemize}[label=$\circ$]
-        \item Un
-            \begin{itemize}[label=$\diamond$]
-                \item $\bigwedge_{i \in \{1, \dots, n\}} i_i$
-            \end{itemize}
-        \item et un seul
-            \begin{itemize}[label=$\diamond$]
-                \item $\bigwedge_{i, j \in \{1, \dots, n\} \wedge i \neq j}  \neg i_i \vee \neg i_j$
-            \end{itemize} 
-
-    \end{itemize}
-    \item Il faut qu'il y ait au moins un état final : 
-    \begin{itemize}[label=$\circ$]
-        \item $\bigvee_{i \in \{1, \dots, n\}} q_i$
-    \end{itemize}
-    \item Il faut que l'ensemble $P$ soit inclus dans l'ensemble des mots acceptés par l'automate : 
-    \begin{itemize}[label=$\circ$]
-        \item $\bigwedge_{p \in P} \bigwedge_{i \in Q} X_{p, i}$
-    \end{itemize}
-    \item Un mot se trouvant dans l'ensemble $N$ ne peut pas être un état acceptant : 
-    \begin{itemize}[label=$\circ$]
-        \item $\bigwedge_{n\in N}\bigwedge_{i\in Q}(Y_{n,i})$
-    \end{itemize} 
-    \item Chaque état doit avoir toutes les transitions possibles (automate complet) : 
-    \begin{itemize}[label=$\circ$]
-        \item $\bigwedge_{i \in Q} \bigwedge_{j \in Q \setminus \{i\}} \bigwedge_{s_i \in \Sigma} \bigvee_{s_j \in \Sigma} d_{i, j, s_i}$ 
-    \end{itemize} 
-\end{itemize} 
-
-
-
-
-
-
-% subsection Choix des variables (end)
-
-
-
-% section Modelisation d'automates en FNC (end)
-
-
-
-
-
+\begin{enumerate}
+    \item Il y a un unique état initial :
+    \begin{equation*}
+        q_{0a} \vee q_{0na}
+    \end{equation*}
+    \item Un état est exclusivement acceptant ou non-acceptant :
+    \begin{equation*}
+        \bigwedge_{\substack{q\in Q \\ i\in \{0,\dots,k\}}} \neg q_{ia} \vee \neg q_{ina}
+    \end{equation*}
+    \item Chaque état est acceptant ou non acceptant :
+    \begin{equation*}
+        \bigvee_{\substack{q\in Q \\ i\in \{0,\dots,k\}}} q_{ia} \vee q_{ina}
+    \end{equation*}
+    \item Chaque état a au plus une transition par lettre de l'alphabet :
+    \begin{equation*}
+        \bigwedge_{\substack{l\in \Sigma\\i,j,q \in Q}}\neg d_{i,j,l} \vee \neg d_{i,q,l}
+    \end{equation*}
+    \item S'il y a une transition pour la lettre $l$ d'un état $i$ à un état $j$, alors 
+    $i$ et $j$ sont des états existants :
+    \begin{equation*}
+        \bigwedge_{\substack{i,j \in Q\\l \in \Sigma}} (\neg d_{i,j,l} \vee (q_{ia}\vee q_{ina})) \wedge (\neg d_{i,j,l} \vee (q_{ja}\vee q_{jna}))
+    \end{equation*}
+    \item Un état $i$ est acceptant s'il existe une exécution d'un mot $m$ de $P$ qui se termine sur l'état $i$ à l'étape $t=len(m)-1$ :
+    \begin{equation*}
+        \bigwedge_{\substack{t=len(m)-1\\q \in Q\\ m \in P\\ i \in \{0,\dots,k\}}} \neg e_{m,i,t} \vee q_{ia}
+    \end{equation*}
+    \item Si on a une exécution pour le mot $m$ à l'étape $t$ sur l'état $i$ et une transition de $i$ vers $j$ pour la lettre l,
+    alors, on a une exécution pour le mot $m$ à l'étape $t+1$ sur l'état $j$ :
+    \begin{equation*}
+        \bigwedge_{\substack{i,j \in Q\\l \in \Sigma\\m \in P\\t \in \{0\dots,len(m)-1\}\\l=m[t]}} (\neg e_{m,i,t} \vee \neg d_{i,j,l} \vee e_{m,j,t+1})
+    \end{equation*}
+    \item Si on a une exécution pour le mot $m$ à l'étape $t$ sur l'état $i$ et une exécution pour le même mot $m$ à l'étape $t+1$ sur l'état $j$,
+    alors, il existe une transition de $i$ vers $j$ pour la lettre $l$ :
+    \begin{equation*}
+        \bigwedge_{\substack{i,j \in Q\\l \in \Sigma\\m \in P\\t \in \{0,\dots,len(m)-1\}\\l=m[t+1]}} (\neg e_{m,i,t} \vee \neg e_{m,j,t+1} \vee d_{i,j,l})
+    \end{equation*}
+    \item Toutes les exécutions sur les mots de N doivent se terminer sur un état non-acceptant :
+    \begin{equation*}
+        \bigwedge_{\substack{m \in N\\i \in \{0,\dots,k\}\\t= len(m)-1}\\q\in Q} \neg e_{m,i,t} \vee q_{ina}
+    \end{equation*}
+    \item Toutes les exécutions sur les mots de P doivent exister :
+    \begin{equation*}
+        \bigwedge{\substack{m\in P}}\bigvee_{\substack{t\in\{0,\dots,len(word)-1\}\\i\in \{0,\dots,k\}}} e_{m,i,t}
+    \end{equation*}
+    \item Toutes les exécutions doivent commencer à l'état initial :
+    \begin{equation*}
+        \bigwedge_{\substack{m\in P\cup N}} e_{m,0,0}
+    \end{equation*}
+\end{enumerate}
 
 
 
