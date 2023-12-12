@@ -36,13 +36,13 @@ def _gen_aut(alphabet: str, pos: list[str], neg: list[str], k: int) -> Tuple[Lis
     states = [nb for nb in range(1, k + 1)]
     A = 0
     NA = 1
-    varnames = variable_names(alphabet, k, vpools, pos, neg)
-    # display keys and values
-    for key, value in varnames.items():
-        print(key, value)
+    # varnames = variable_names(alphabet, k, vpools, pos, neg)
+    # # display keys and values
+    # for key, value in varnames.items():
+    #     print(key, value)
 
     # 1. Il y a un unique état initial OK
-    # cnf.append([vpools.id((states[0], acceptant[A])), vpools.id((states[0], acceptant[NA]))])
+    cnf.append([vpools.id((states[0], acceptant[A])), vpools.id((states[0], acceptant[NA]))])
 
     # 2. Un état est exclusivement acceptant ou non-acceptant
     for i in states:
@@ -52,10 +52,6 @@ def _gen_aut(alphabet: str, pos: list[str], neg: list[str], k: int) -> Tuple[Lis
                 -vpools.id((i, acceptant[NA])),
             ]
         )
-
-    # 3. Chaque état est acceptant ou non-acceptant
-    # for i in states:
-    #     cnf.append([vpools.id((i, acceptant[A])), vpools.id((i, acceptant[NA]))])
 
     # 4. Chaque état a au plus une transition par lettre de l'alphabet OK
     for i in states:
@@ -72,24 +68,24 @@ def _gen_aut(alphabet: str, pos: list[str], neg: list[str], k: int) -> Tuple[Lis
 
     # 5. S'il y a une transition pour la lettre l d'un état i à un état j, alors i et
     # j sont des états existants
-    # for i in states:
-    #     for j in states:
-    #         for letter in alphabet:
-    #             cnf.append(
-    #                 [
-    #                     -vpools.id((i, letter, j)),
-    #                     vpools.id((i, acceptant[A])),
-    #                     vpools.id((i, acceptant[NA])),
-    #                 ]
-    #             )
-    #             if i != j:
-    #                 cnf.append(
-    #                     [
-    #                         -vpools.id((i, letter, j)),
-    #                         vpools.id((j, acceptant[A])),
-    #                         vpools.id((j, acceptant[NA])),
-    #                     ]
-    #                 )
+    for i in states:
+        for j in states:
+            for letter in alphabet:
+                cnf.append(
+                    [
+                        -vpools.id((i, letter, j)),
+                        vpools.id((i, acceptant[A])),
+                        vpools.id((i, acceptant[NA])),
+                    ]
+                )
+                if i != j:
+                    cnf.append(
+                        [
+                            -vpools.id((i, letter, j)),
+                            vpools.id((j, acceptant[A])),
+                            vpools.id((j, acceptant[NA])),
+                        ]
+                    )
 
     # 6. Un état i est acceptant si et seulement s'il existe une exécution d'un mot m de P qui se termine
     # sur i à l'étape t = len(m) - 1
@@ -159,19 +155,19 @@ def _gen_aut(alphabet: str, pos: list[str], neg: list[str], k: int) -> Tuple[Lis
                 d.append(vpools.id((word, i, t + 1)))
             cnf.append(d)
 
-    print("Clauses construites:\n", len(cnf.clauses))
-    print(cnf.clauses)  # pour afficher les clauses
-    print("\n")
+    # print("Clauses construites:\n", len(cnf.clauses))
+    # print(cnf.clauses)  # pour afficher les clauses
+    # print("\n")
     # On résout le problème SAT
     solver = Minisat22()
     solver.append_formula(cnf.clauses, no_return=False)
-    print("Resolution...")
+    # print("Resolution...")
     resultat = solver.solve()
-    print("satisfaisable : " + str(resultat))
-    print("\n")
-    print("Interpretation :")
+    # print("satisfaisable : " + str(resultat))
+    # print("\n")
+    # print("Interpretation :")
     model = solver.get_model()
-    print(model)
+    # print(model)
     return model, vpools
 
 
@@ -224,13 +220,19 @@ def gen_aut(alphabet: str, pos: list[str], neg: list[str], k: int) -> DFA | None
 #     3,
 # )
 
-t = ("ab", ["aa", "ab", "ba"], ["", "a", "b", "bb", "aaa", "aba", "bba"], 4)
+# t = ("ab", ["aa", "ab", "ba"], ["", "a", "b", "bb", "aaa", "aba", "bba"], 4)  # acceptant
 
-dfa = gen_aut(t[0], t[1], t[2], t[3])
-if dfa is not None:
-    show_automaton(dfa)
-else:
-    print("NOPE")
+# dfa = gen_aut(t[0], t[1], t[2], t[3])
+# if dfa is not None:
+#     show_automaton(dfa)
+# else:
+#     print("NOPE")
 # gen_aut(t[0], t[1], t[2], t[3])
 
-# test_aut()
+
+def main():
+    test_aut()
+
+
+if __name__ == "__main__":
+    main()
