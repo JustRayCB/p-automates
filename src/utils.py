@@ -23,6 +23,39 @@ LAYOUTS = {
 }
 
 
+def build_dfa(states, alphabet, acceptation, model, vpool) -> DFA:
+    A = 0
+    states_dfa = set()
+    final = set()
+    initial = "q" + str(states[0])
+    transit = dict()
+    symbols = set(alphabet)
+    for state in states:
+        for accept in acceptation:
+            if vpool.id((state, accept)) in model:
+                if accept == acceptation[A]:
+                    final.add("q" + str(state))
+                states_dfa.add("q" + str(state))
+
+    for i in states:
+        s = "q" + str(i)
+        transit[s] = dict()
+        for letter in alphabet:
+            for j in states:
+                if vpool.id((i, letter, j)) in model:
+                    transit[s][letter] = "q" + str(j)
+
+    dfa = DFA(
+        states=states_dfa,
+        input_symbols=symbols,
+        transitions=transit,
+        initial_state=initial,
+        final_states=final,
+        allow_partial=True,
+    )
+    return dfa
+
+
 def rotate_vector(v: np.ndarray, angle: float) -> np.ndarray:
     c = np.cos(angle)
     s = np.sin(angle)

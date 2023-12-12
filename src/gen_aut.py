@@ -133,7 +133,7 @@ def gen_aut(alphabet: str, pos: list[str], neg: list[str], k: int) -> DFA | None
     acceptation = ["acceptant", "non-acceptant"]  # 1:= Acceptant, 2:= Non-Acceptant
     states = [nb for nb in range(1, k + 1)]
     A = 0
-    cnf, vpools = _gen_aut(alphabet, pos, neg, k)
+    cnf, vpool = _gen_aut(alphabet, pos, neg, k)
     # On résout le problème SAT
     solver = Minisat22()
     solver.append_formula(cnf.clauses, no_return=False)
@@ -141,34 +141,7 @@ def gen_aut(alphabet: str, pos: list[str], neg: list[str], k: int) -> DFA | None
     model = solver.get_model()
     if model is None:
         return None
-    states_dfa = set()
-    final = set()
-    initial = "q" + str(states[0])
-    transit = dict()
-    symbols = set(alphabet)
-    for state in states:
-        for accept in acceptation:
-            if vpools.id((state, accept)) in model:
-                if accept == acceptation[A]:
-                    final.add("q" + str(state))
-                states_dfa.add("q" + str(state))
-
-    for i in states:
-        s = "q" + str(i)
-        transit[s] = dict()
-        for letter in alphabet:
-            for j in states:
-                if vpools.id((i, letter, j)) in model:
-                    transit[s][letter] = "q" + str(j)
-
-    dfa = DFA(
-        states=states_dfa,
-        input_symbols=symbols,
-        transitions=transit,
-        initial_state=initial,
-        final_states=final,
-        allow_partial=True,
-    )
+    dfa = build_dfa(states, alphabet, acceptation, model, vpool)
     return dfa
 
 

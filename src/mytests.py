@@ -2,9 +2,8 @@ from collections import defaultdict
 from functools import wraps
 from inspect import getfullargspec
 
-# from project import *
-# from msg import *
 from gen_aut import *
+from gen_autc import *
 
 from automata.fa.fa import FA
 from automata.fa.dfa import DFA
