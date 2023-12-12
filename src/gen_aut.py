@@ -167,6 +167,13 @@ def gen_aut(alphabet: str, pos: list[str], neg: list[str], k: int) -> DFA | None
 
 def main():
     test_aut()
+    # t = ("a", ["", "aa", "aaaaaa"], ["a", "aaa", "aaaaa"], 2)
+    # t = ("ab", ["aa", "ab", "ba"], ["", "a", "b", "bb", "aaa", "aba", "bba"], 4)  # acceptant
+    # dfa = gen_aut(t[0], t[1], t[2], t[3])
+    # if dfa is not None:
+    #     show_automaton(dfa)
+    # else:
+    #     print("NOPE")
 
 
 if __name__ == "__main__":

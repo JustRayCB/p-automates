@@ -182,15 +182,15 @@ def show_automaton(fa, layout: str = "spring"):
     nx.draw_networkx_nodes(
         G, pos=pos, nodelist=list(fa.final_states), node_size=450, edgecolors="black"
     )
+    nx.draw_networkx_nodes(G, pos=pos, node_size=250, edgecolors="black")
     nx.draw_networkx_nodes(
         G,
         pos=pos,
         nodelist=[fa.initial_state],
-        node_size=450,
-        node_color="grey",
+        node_size=250,
+        node_color="yellow",
         edgecolors="black",
     )
-    nx.draw_networkx_nodes(G, pos=pos, node_size=250, edgecolors="black")
     nx.draw_networkx_labels(G, pos=pos)
     _draw_edges(G, pos)
     plt.gcf().tight_layout()
