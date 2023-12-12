@@ -90,52 +90,58 @@ qui représente l'ensemble des exécutions de l'automate. Nous pouvons définir 
 \label{sub:contraintes}
 
 \begin{enumerate}
+    %1
     \item Il y a un unique état initial :
     \begin{equation*}
         q_{0a} \vee q_{0na}
     \end{equation*}
+    %2
     \item Un état est exclusivement acceptant ou non-acceptant :
     \begin{equation*}
-        \bigwedge_{\substack{q\in Q \\ i\in \{0,\dots,k\}}} \neg q_{ia} \vee \neg q_{ina}
+        \bigwedge_{\substack{q\in Q \\ i\in \{1,\dots,k\}}} q_{ia} \rightarrow \neg q_{ina}\equiv
+        \bigwedge_{\substack{q\in Q \\ i\in \{1,\dots,k\}}} \neg q_{ia} \vee \neg q_{ina}
     \end{equation*}
-    \item Chaque état est acceptant ou non acceptant :
-    \begin{equation*}
-        \bigvee_{\substack{q\in Q \\ i\in \{0,\dots,k\}}} q_{ia} \vee q_{ina}
-    \end{equation*}
+    %3
     \item Chaque état a au plus une transition par lettre de l'alphabet :
     \begin{equation*}
+        \bigwedge_{\substack{l\in \Sigma\\i,j,q \in Q}} d_{i,j,l} \rightarrow \neg d_{i,q,l}\equiv
         \bigwedge_{\substack{l\in \Sigma\\i,j,q \in Q}}\neg d_{i,j,l} \vee \neg d_{i,q,l}
     \end{equation*}
-    \item S'il y a une transition pour la lettre $l$ d'un état $i$ à un état $j$, alors 
-    $i$ et $j$ sont des états existants :
+    %4
+    \item Un état $i$ est acceptant s'il existe une exécution d'un mot $m$ de $P$ qui se termine sur l'état $i$ à l'étape $t=len(m)$ :
     \begin{equation*}
-        \bigwedge_{\substack{i,j \in Q\\l \in \Sigma}} (\neg d_{i,j,l} \vee (q_{ia}\vee q_{ina})) \wedge (\neg d_{i,j,l} \vee (q_{ja}\vee q_{jna}))
+        \bigwedge_{\substack{t=len(m)\\q \in Q\\ m \in P\\ i \in \{1,\dots,k\}}} e_{m,i,t} \rightarrow q_{ia} \equiv
+        \bigwedge_{\substack{t=len(m)\\q \in Q\\ m \in P\\ i \in \{1,\dots,k\}}} \neg e_{m,i,t} \vee q_{ia}
     \end{equation*}
-    \item Un état $i$ est acceptant s'il existe une exécution d'un mot $m$ de $P$ qui se termine sur l'état $i$ à l'étape $t=len(m)-1$ :
-    \begin{equation*}
-        \bigwedge_{\substack{t=len(m)-1\\q \in Q\\ m \in P\\ i \in \{0,\dots,k\}}} \neg e_{m,i,t} \vee q_{ia}
-    \end{equation*}
+    %5
     \item Si on a une exécution pour le mot $m$ à l'étape $t$ sur l'état $i$ et une transition de $i$ vers $j$ pour la lettre l,
     alors, on a une exécution pour le mot $m$ à l'étape $t+1$ sur l'état $j$ :
     \begin{equation*}
-        \bigwedge_{\substack{i,j \in Q\\l \in \Sigma\\m \in P\\t \in \{0\dots,len(m)-1\}\\l=m[t]}} (\neg e_{m,i,t} \vee \neg d_{i,j,l} \vee e_{m,j,t+1})
+        \bigwedge_{\substack{i,j \in Q\\l \in \Sigma\\m \in P\\t \in \{0,\dots,len(m)\}\\l=m[t]}} (e_{m,i,t} \wedge d_{i,j,l} \rightarrow e_{m,j,t+1}) \equiv
+        \bigwedge_{\substack{i,j \in Q\\l \in \Sigma\\m \in P\\t \in \{0,\dots,len(m)\}\\l=m[t]}} (\neg e_{m,i,t} \vee \neg d_{i,j,l} \vee e_{m,j,t+1})
     \end{equation*}
+    %6
     \item Si on a une exécution pour le mot $m$ à l'étape $t$ sur l'état $i$ et une exécution pour le même mot $m$ à l'étape $t+1$ sur l'état $j$,
     alors, il existe une transition de $i$ vers $j$ pour la lettre $l$ :
     \begin{equation*}
-        \bigwedge_{\substack{i,j \in Q\\l \in \Sigma\\m \in P\\t \in \{0,\dots,len(m)-1\}\\l=m[t+1]}} (\neg e_{m,i,t} \vee \neg e_{m,j,t+1} \vee d_{i,j,l})
+        \bigwedge_{\substack{i,j \in Q\\l \in \Sigma\\m \in P\\t \in \{0,\dots,len(m)\}\\l=m[t]}} (\neg e_{m,i,t} \vee \neg e_{m,j,t+1} \vee d_{i,j,l})\equiv
+        \bigwedge_{\substack{i,j \in Q\\l \in \Sigma\\m \in P\\t \in \{0,\dots,len(m)\}\\l=m[t]}} (\neg e_{m,i,t} \vee \neg e_{m,j,t+1} \vee d_{i,j,l})
     \end{equation*}
+    %7
     \item Toutes les exécutions sur les mots de N doivent se terminer sur un état non-acceptant :
     \begin{equation*}
-        \bigwedge_{\substack{m \in N\\i \in \{0,\dots,k\}\\t= len(m)-1}\\q\in Q} \neg e_{m,i,t} \vee q_{ina}
+        \bigwedge_{\substack{m \in N\\i \in \{1,\dots,k\}\\t=len(m)}\\q\in Q} e_{m,i,t} \rightarrow q_{ina}\equiv
+        \bigwedge_{\substack{m \in N\\i \in \{1,\dots,k\}\\t=len(m)}\\q\in Q} \neg e_{m,i,t} \vee q_{ina}
     \end{equation*}
+    %8
     \item Toutes les exécutions sur les mots de P doivent exister :
     \begin{equation*}
-        \bigwedge{\substack{m\in P}}\bigvee_{\substack{t\in\{0,\dots,len(word)-1\}\\i\in \{0,\dots,k\}}} e_{m,i,t}
+        \bigwedge{\substack{m\in P}}\bigvee_{\substack{t\in\{0,\dots,len(word)\}\\i\in \{1,\dots,k\}}} e_{m,i,t+1}
     \end{equation*}
+    %9
     \item Toutes les exécutions doivent commencer à l'état initial :
     \begin{equation*}
-        \bigwedge_{\substack{m\in P\cup N}} e_{m,0,0}
+        \bigwedge_{\substack{m\in P\cup N}} e_{m,1,0}
     \end{equation*}
 \end{enumerate}
 
