@@ -7,7 +7,7 @@ from automata.fa.dfa import DFA
 from automata.fa.nfa import NFA
 
 from pysat.solvers import Minisat22, Minicard
-from pysat.formula import CNF, CNFPlus, IDPool
+from pysat.formula import CNF, IDPool
 
 
 def variable_names(alphabet: str, k: int, vpools, pos, neg) -> dict:
@@ -29,7 +29,7 @@ def variable_names(alphabet: str, k: int, vpools, pos, neg) -> dict:
 
 
 def _gen_aut(alphabet: str, pos: list[str], neg: list[str], k: int) -> Tuple[List | None, IDPool]:
-    cnf = CNFPlus()
+    cnf = CNF()
     vpools = IDPool(start_from=1)
     acceptant = ["acceptant", "non-acceptant"]
     states = [nb for nb in range(1, k + 1)]
@@ -138,7 +138,6 @@ def gen_aut(alphabet: str, pos: list[str], neg: list[str], k: int) -> DFA | None
     acceptation = ["acceptant", "non-acceptant"]  # 1:= Non-Acceptant, 2:= Acceptant
     states = [nb for nb in range(1, k + 1)]
     A = 0
-    NA = 1
     model, vpools = _gen_aut(alphabet, pos, neg, k)
     if model is None:
         return None
