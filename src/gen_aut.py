@@ -13,7 +13,6 @@ from pysat.formula import CNF, CNFPlus, IDPool
 def variable_names(alphabet: str, k: int, vpools, pos, neg) -> dict:
     states = [nb for nb in range(1, k + 1)]
     acceptation = ["acceptant", "non-acceptant"]  # 1:= Non-Acceptant, 2:= Acceptant
-    # initial = ["non-initial", "initial"]  # 1:= Pas Initial, 2:= Initial
     variables = dict()
     for i in states:
         for accept in acceptation:
@@ -67,25 +66,7 @@ def _gen_aut(alphabet: str, pos: list[str], neg: list[str], k: int) -> Tuple[Lis
                         )
 
     # 5. S'il y a une transition pour la lettre l d'un état i à un état j, alors i et
-    # j sont des états existants
-    for i in states:
-        for j in states:
-            for letter in alphabet:
-                cnf.append(
-                    [
-                        -vpools.id((i, letter, j)),
-                        vpools.id((i, acceptant[A])),
-                        vpools.id((i, acceptant[NA])),
-                    ]
-                )
-                if i != j:
-                    cnf.append(
-                        [
-                            -vpools.id((i, letter, j)),
-                            vpools.id((j, acceptant[A])),
-                            vpools.id((j, acceptant[NA])),
-                        ]
-                    )
+    # j sont des états existants NOPE
 
     # 6. Un état i est acceptant si et seulement s'il existe une exécution d'un mot m de P qui se termine
     # sur i à l'étape t = len(m) - 1
@@ -98,7 +79,6 @@ def _gen_aut(alphabet: str, pos: list[str], neg: list[str], k: int) -> Tuple[Lis
 
     # 7. Si on a une exécution pour le mot m à l'étape t sur l'état i et une transition de i vers j pour la lettre l,
     # alors, on a une exécution pour le mot m à l'étape t+1 sur l'état j. OK
-    # ------------------------ PAS SSI ------------------------
     for word in pos + neg:
         for t in range(len(word)):
             for i in states:
@@ -138,15 +118,6 @@ def _gen_aut(alphabet: str, pos: list[str], neg: list[str], k: int) -> Tuple[Lis
     for word in all_words:
         cnf.append([vpools.id((word, states[0], 0))])
 
-    for word in pos:
-        for i in states:
-            for t in range(len(word)):
-                d = []
-                for j in states:
-                    d.append(-vpools.id((word, j, t)))
-                    d.append(vpools.id((i, word[t], j)))
-                cnf.append(d)
-
     # 11. Toutes les exécutions sur P doivent exister
     for word in pos:
         for t in range(len(word)):
@@ -155,19 +126,11 @@ def _gen_aut(alphabet: str, pos: list[str], neg: list[str], k: int) -> Tuple[Lis
                 d.append(vpools.id((word, i, t + 1)))
             cnf.append(d)
 
-    # print("Clauses construites:\n", len(cnf.clauses))
-    # print(cnf.clauses)  # pour afficher les clauses
-    # print("\n")
     # On résout le problème SAT
     solver = Minisat22()
     solver.append_formula(cnf.clauses, no_return=False)
-    # print("Resolution...")
     resultat = solver.solve()
-    # print("satisfaisable : " + str(resultat))
-    # print("\n")
-    # print("Interpretation :")
     model = solver.get_model()
-    # print(model)
     return model, vpools
 
 
