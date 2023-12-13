@@ -20,7 +20,7 @@ def gen_minaut(alphabet: str, pos: list[str], neg: list[str]) -> DFA | None:
     k = 0
 
     # Binary search to find the upper bound
-    low = 2 ** e
+    low = 2**e
     high = 2 ** (e + 1)
     while not found:
         solver = Minisat22()
@@ -47,6 +47,14 @@ def gen_minaut(alphabet: str, pos: list[str], neg: list[str]) -> DFA | None:
             high = mid
         else:
             low = mid
+
+    # The upper bound is the k
+    k = high
+    solver = Minisat22()
+    cnf, vpool = _gen_aut(alphabet, pos, neg, k)
+    solver.append_formula(cnf.clauses, no_return=False)
+    _ = solver.solve()
+    model = solver.get_model()
 
     states = [nb for nb in range(1, high + 1)]
     A = 0
