@@ -7,7 +7,7 @@ from automata.fa.dfa import DFA
 from automata.fa.nfa import NFA
 
 from pysat.solvers import Minisat22, Minicard
-from pysat.formula import CNF, IDPool
+from pysat.formula import CNF, CNFPlus, IDPool
 
 
 def variable_names(alphabet: str, k: int, vpools, pos, neg) -> dict:
@@ -28,8 +28,8 @@ def variable_names(alphabet: str, k: int, vpools, pos, neg) -> dict:
     return variables
 
 
-def _gen_aut(alphabet: str, pos: list[str], neg: list[str], k: int) -> Tuple[CNF, IDPool]:
-    cnf = CNF()
+def _gen_aut(alphabet: str, pos: list[str], neg: list[str], k: int) -> Tuple[CNFPlus, IDPool]:
+    cnf = CNFPlus()
     vpools = IDPool(start_from=1)
     acceptant = ["acceptant", "non-acceptant"]
     states = [nb for nb in range(1, k + 1)]
@@ -169,6 +169,50 @@ def main():
     test_aut()
     # t = ("a", ["", "aa", "aaaaaa"], ["a", "aaa", "aaaaa"], 2)
     # t = ("ab", ["aa", "ab", "ba"], ["", "a", "b", "bb", "aaa", "aba", "bba"], 4)  # acceptant
+    # t = (
+    #     "ab",
+    #     [
+    #         "abaa",
+    #         "baa",
+    #         "baaabba",
+    #         "baabbb",
+    #         "bab",
+    #         "babaa",
+    #         "babbab",
+    #         "babbb",
+    #         "bba",
+    #         "bbaa",
+    #         "bbab",
+    #         "bbabba",
+    #         "bbb",
+    #         "bbba",
+    #         "bbbab",
+    #         "bbbb",
+    #         "bbbba",
+    #         "bbbbab",
+    #     ],
+    #     [
+    #         "",
+    #         "a",
+    #         "aa",
+    #         "aaa",
+    #         "b",
+    #         "ba",
+    #         "baaa",
+    #         "baaaa",
+    #         "baab",
+    #         "baba",
+    #         "bababb",
+    #         "babb",
+    #         "bb",
+    #         "bbaaa",
+    #         "bbaaba",
+    #         "bbabb",
+    #         "bbbabb",
+    #     ],
+    #     8,
+    # )
+    #
     # dfa = gen_aut(t[0], t[1], t[2], t[3])
     # if dfa is not None:
     #     show_automaton(dfa)

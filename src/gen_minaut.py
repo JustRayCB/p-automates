@@ -19,7 +19,6 @@ def gen_minaut(alphabet: str, pos: list[str], neg: list[str]) -> DFA | None:
     found = False
     while not found:
         solver = Minisat22()
-        print("k = ", k)
         cnf, vpool = _gen_aut(alphabet, pos, neg, k)
         solver.append_formula(cnf.clauses, no_return=False)
         _ = solver.solve()
