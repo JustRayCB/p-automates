@@ -14,18 +14,19 @@ from pysat.formula import CNF, CNFPlus, IDPool
 def gen_minaut(alphabet: str, pos: list[str], neg: list[str]) -> DFA | None:
     acceptation = ["acceptant", "non-acceptant"]
     found = False
-    k = 1
+    e = 0
     model, vpool = None, None
     found = False
+    k = 0
     while not found:
         solver = Minisat22()
-        cnf, vpool = _gen_aut(alphabet, pos, neg, k)
+        cnf, vpool = _gen_aut(alphabet, pos, neg, 2**e)
         solver.append_formula(cnf.clauses, no_return=False)
         _ = solver.solve()
         model = solver.get_model()
         if model:
             found = True
-        k += 1
+        e += 1
 
     states = [nb for nb in range(1, k + 1)]
     A = 0
