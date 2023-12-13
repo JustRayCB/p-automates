@@ -18,17 +18,37 @@ def gen_minaut(alphabet: str, pos: list[str], neg: list[str]) -> DFA | None:
     model, vpool = None, None
     found = False
     k = 0
+
+    # Binary search to find the upper bound
+    low = 2 ** e
+    high = 2 ** (e + 1)
     while not found:
         solver = Minisat22()
-        cnf, vpool = _gen_aut(alphabet, pos, neg, 2**e)
+        cnf, vpool = _gen_aut(alphabet, pos, neg, high)
         solver.append_formula(cnf.clauses, no_return=False)
         _ = solver.solve()
         model = solver.get_model()
         if model:
             found = True
-        e += 1
+        else:
+            e += 1
+            low = high
+            high = 2 ** (e + 1)
 
-    states = [nb for nb in range(1, k + 1)]
+    # Binary search between 2^(k-1) and 2^k
+    while low < high - 1:
+        mid = (low + high) // 2
+        solver = Minisat22()
+        cnf, vpool = _gen_aut(alphabet, pos, neg, mid)
+        solver.append_formula(cnf.clauses, no_return=False)
+        _ = solver.solve()
+        model = solver.get_model()
+        if model:
+            high = mid
+        else:
+            low = mid
+
+    states = [nb for nb in range(1, high + 1)]
     A = 0
     dfa = build_dfa(states, alphabet, acceptation, model, vpool)
     return dfa
