@@ -29,14 +29,15 @@
 
 %================= Content =============================
 
-\section{Modelisation d'automates en FNC} % (fold)
+%QUESTION 1
+\section{Modélisation d'un automate déterministe en FNC} 
 \label{sec:modelisation_d_automates_en_fnc_}
 
 % Sachant qu'il existe les ensemble $P$ et $N$ qui représentent respectivement 
 % les états acceptants et non-acceptants d'un automate, nous avons décidé de 
 % modéliser un automate en FNC de la manière suivante :
 
-Voici quelques notations que nous utiliserons dans la suite de ce rapport : 
+Voici quelques notations utilisées dans la suite de ce rapport : 
 \begin{itemize}[label=$\bullet$]
     \item $P$ représente l'ensemble des mots acceptés par l'automate 
     \item $N$ représente l'ensemble des mots non-acceptés par l'automate 
@@ -44,42 +45,35 @@ Voici quelques notations que nous utiliserons dans la suite de ce rapport :
     \item $k$ représente le nombre au plus d'états de l'automate
 \end{itemize}
 
-\noindent Afin de modéliser un automate en FNC, il faut tout d'abord définir les variables qui seront 
-utilisées.Pour cela, nous avons décidé de créer une variable par état de l'automate, et une 
-variable par transition. Ainsi, pour un automate à $n$ états et $m$ transitions, nous aurons 
-$n+m$ variables. 
-
-\subsection{Choix des variables} % (fold)
+\subsection{Choix des variables}
 \label{sub:choix_des_variables}
 
-\subsubsection{Etats} % (fold)
+\subsubsection{Etats}
 \label{sec:etats}
 
-Nous définissons notre ensemble $Q = \{q_{0a}, q_{0na}, \dots, q_{la}, q_{lna} | l \le k\}$, il y a
-donc $2k$ états dans $Q$ pour un automate à $k$ états. Nous pouvons définir les variables $q_i$ comme suit : 
+\noindent L'ensemble $Q$ est défini comme suit : $Q = \{q_{0a}, q_{0na}, \dots, q_{la}, q_{lna} | l \le k\}$ contenant
+ainsi $2k$ états dans $Q$ pour un automate à $k$ états. Les variables $q_i$ peuvent être définies comme suit : 
 \begin{itemize}[label=$\bullet$]
     \item $q_{ia} = 1$ si l'état $i$ est acceptant et donc $q_{ina} = 0$.
     \item $q_{ina} = 1$ si l'état $i$ est non-acceptant et donc $q_{ia} = 0$.
 \end{itemize}
 
-\subsubsection{Transitions} % (fold) 
+\subsubsection{Transitions} 
 \label{sec:transitions} 
 
-Nous définissons notre ensemble $\delta = \{d_{i, l, j} | i, j \in Q, l \in \Sigma\}$, qui 
-représente l'ensemble des transitions de l'automate. 
-Nous pouvons définir les variables $d_{i, j, s_i}$ comme suit : 
+\noindent L'ensemble $\delta$ est défini comme suit : $\delta = \{d_{i, l, j} | i, j \in Q, l \in \Sigma\}$, représentant
+l'ensemble des transitions de l'automate. Les variables $d_{i, l, j}$ peuvent être définies comme suit : 
 \begin{itemize}[label=$\bullet$]
-    \item $d_{i, j, l} = 1$ si la transition avec la lettre $l$ existe entre l'état $i$ et l'état $j$.
-    \item $d_{i, j, l} = 0$ si la transition avec la lettre $l$ n'existe pas entre l'état $i$ et l'état $j$.
+    \item $d_{i, l, j} = 1$ si la transition avec la lettre $l$ existe entre l'état $i$ et l'état $j$.
+    \item $d_{i, l, j} = 0$ si la transition avec la lettre $l$ n'existe pas entre l'état $i$ et l'état $j$.
 \end{itemize} 
 
-% subsubsection Transitions (end) 
 
 \subsubsection{Exécutions}
 \label{sec:executions}
 
-Nous définissons notre ensemble $E = \{e_{m, i, t} | i \in Q, t \in \{-1,\dots,\text{len}(m)\}\, m \in P \cup N\}$,
-qui représente l'ensemble des exécutions de l'automate. Nous pouvons définir les variables $e_{m, i, t}$ comme suit :
+\noindent L'ensemble $E$ est défini comme suit : $E = \{e_{m, i, t} | i \in Q, t \in \{-1,\dots,\text{len}(m)\}\, m \in P \cup N\}$,
+représentant l'ensemble des exécutions de l'automate. Les variables $e_{m, i, t}$ peuvent être définies comme suit :
 \begin{itemize}[label=$\bullet$]
     \item $e_{m, i, t} = 1$ si l'automate est dans l'état $i$ après avoir lu les $t$ premières lettres du mot $m$.
     \item $e_{m, i, t} = 0$ si l'automate n'est pas dans l'état $i$ après avoir lu les $t$ premières lettres du mot $m$.
@@ -104,8 +98,8 @@ qui représente l'ensemble des exécutions de l'automate. Nous pouvons définir 
     %3
     \item Chaque état a au plus une transition par lettre de l'alphabet :
     \begin{equation*}
-        \bigwedge_{\substack{l\in \Sigma\\i,j,q \in Q}} d_{i,j,l} \rightarrow \neg d_{i,q,l}\equiv
-        \bigwedge_{\substack{l\in \Sigma\\i,j,q \in Q}}\neg d_{i,j,l} \vee \neg d_{i,q,l}
+        \bigwedge_{\substack{l\in \Sigma\\i,j,q \in Q}} d_{i,l,j} \rightarrow \neg d_{i,l,q}\equiv
+        \bigwedge_{\substack{l\in \Sigma\\i,j,q \in Q}}\neg d_{i,l,j} \vee \neg d_{i,l,q}
     \end{equation*}
     %4
     \item Un état $i$ est acceptant s'il existe une exécution d'un mot $m$ de $P$ qui se termine sur l'état $i$ à l'étape $t=len(m)$ :
@@ -117,15 +111,15 @@ qui représente l'ensemble des exécutions de l'automate. Nous pouvons définir 
     \item Si on a une exécution pour le mot $m$ à l'étape $t$ sur l'état $i$ et une transition de $i$ vers $j$ pour la lettre l,
     alors, on a une exécution pour le mot $m$ à l'étape $t+1$ sur l'état $j$ :
     \begin{equation*}
-        \bigwedge_{\substack{i,j \in Q\\l \in \Sigma\\m \in P\\t \in \{0,\dots,len(m)\}\\l=m[t]}} (e_{m,i,t} \wedge d_{i,j,l} \rightarrow e_{m,j,t+1}) \equiv
-        \bigwedge_{\substack{i,j \in Q\\l \in \Sigma\\m \in P\\t \in \{0,\dots,len(m)\}\\l=m[t]}} (\neg e_{m,i,t} \vee \neg d_{i,j,l} \vee e_{m,j,t+1})
+        \bigwedge_{\substack{i,j \in Q\\l \in \Sigma\\m \in P\\t \in \{0,\dots,len(m)\}\\l=m[t]}} (e_{m,i,t} \wedge d_{i,l,j} \rightarrow e_{m,j,t+1}) \equiv
+        \bigwedge_{\substack{i,j \in Q\\l \in \Sigma\\m \in P\\t \in \{0,\dots,len(m)\}\\l=m[t]}} (\neg e_{m,i,t} \vee \neg d_{i,l,j} \vee e_{m,j,t+1})
     \end{equation*}
     %6
     \item Si on a une exécution pour le mot $m$ à l'étape $t$ sur l'état $i$ et une exécution pour le même mot $m$ à l'étape $t+1$ sur l'état $j$,
     alors, il existe une transition de $i$ vers $j$ pour la lettre $l$ :
     \begin{equation*}
-        \bigwedge_{\substack{i,j \in Q\\l \in \Sigma\\m \in P\\t \in \{0,\dots,len(m)\}\\l=m[t]}} (\neg e_{m,i,t} \vee \neg e_{m,j,t+1} \vee d_{i,j,l})\equiv
-        \bigwedge_{\substack{i,j \in Q\\l \in \Sigma\\m \in P\\t \in \{0,\dots,len(m)\}\\l=m[t]}} (\neg e_{m,i,t} \vee \neg e_{m,j,t+1} \vee d_{i,j,l})
+        \bigwedge_{\substack{i,j \in Q\\l \in \Sigma\\m \in P\\t \in \{0,\dots,len(m)\}\\l=m[t]}} (\neg e_{m,i,t} \vee \neg e_{m,j,t+1} \vee d_{i,l,j})\equiv
+        \bigwedge_{\substack{i,j \in Q\\l \in \Sigma\\m \in P\\t \in \{0,\dots,len(m)\}\\l=m[t]}} (\neg e_{m,i,t} \vee \neg e_{m,j,t+1} \vee d_{i,l,j})
     \end{equation*}
     %7
     \item Toutes les exécutions sur les mots de N doivent se terminer sur un état non-acceptant :
@@ -145,8 +139,47 @@ qui représente l'ensemble des exécutions de l'automate. Nous pouvons définir 
     \end{equation*}
 \end{enumerate}
 
+%QUESTION 3
+\section{Algorithme de minimisation d'un automate déterministe}
+\label{sec:algo_minimisation}
+\noindent Afin de minimiser le nombre d'états d'un automate fini sur $\Sigma$, une approche itérative est utilisée en considérant :
+\begin{equation*}
+    k\in\{0,\dots,\infty\}
+\end{equation*}
+Etant donné que l'automate est fini, il existe un nombre fini d'états, éliminant ainsi la nécessité d'une borne supérieure.
+Pour chaque valeur de $k$, les contraintes précédemment définies (cf. \ref{sec:modelisation_d_automates_en_fnc_}) sont utilisées
+dans le but de déterminer le $k$ minimal pour lequel le résultat n'est pas \texttt{None}.
 
 
+%QUESTION 4
+\section{Modélisation d'un automate déterministe complet en FNC} 
+\label{sec:automate_deterministe_complet}
+\noindent Il suffit de reprendre les contraintes précédentes (cf. \ref{sec:modelisation_d_automates_en_fnc_}) et d'ajouter la
+contrainte suivante :
+\begin{enumerate}
+    \item Tous les états doivent avoir au moins une transition par lettre de l'alphabet :
+    \begin{equation*}
+        \bigwedge_{l \in \Sigma} \bigvee_{i,j\in Q} d_{i,l,j}
+    \end{equation*}
+\end{enumerate}
+Du fait que nous avons au moins une transition par lettre de l'alphabet et au plus une transition par lettre de l'alphabet,
+nous avons donc exactement une transition par lettre de l'alphabet pour chaque état, ce qui implique que l'automate est complet.
+
+
+%QUESTION 5
+\section{Modélisation d'un automate réversible en FNC}
+\noindent Il suffit de rajouter aux contraintes précédentes (cf. \ref{sec:modelisation_d_automates_en_fnc_}) la contrainte suivante :
+\begin{enumerate}
+    \item Toutes les transitions doivent être réversibles, autrement dit, si il existe une transition de $i$ vers $j$ pour la lettre $l$,
+    alors il existe une transition de $j$ vers $i$ pour la lettre $l$ :
+    \begin{equation*}
+        \bigwedge_{\substack{i,j \in Q\\l \in \Sigma}} d_{i,l,j} \leftrightarrow d_{j,l,i}\equiv
+        \bigwedge_{\substack{i,j \in Q\\l \in \Sigma}} (\neg d_{i,l,j} \vee d_{j,l,i}) \wedge (\neg d_{j,l,i} \vee d_{i,l,j})
+    \end{equation*}
+\end{enumerate}
+
+%QUESTION 6
+\section{Modélisation d'un automate fini complet avec au plus $l$ états en FNC}
 
 
 %================= Bibliography ========================
