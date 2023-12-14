@@ -21,7 +21,19 @@ def gen_autr(alphabet: str, pos: list[str], neg: list[str], k: int) -> DFA | Non
     #     for j in states:
     #         for letter in alphabet:
     #             cnf.append([-vpool.id((i, letter, j)), vpool.id((j, letter, i))])
-    #             cnf.append([vpool.id((i, letter, j)), -vpool.id((j, letter, i))])
+                # cnf.append([vpool.id((i, letter, j)), -vpool.id((j, letter, i))])
+    # for word in pos:
+    #     for t in range(len(word)):
+    #         for i in states:
+    #             for j in states:
+    #                 cnf.append([-vpool.id((word, j, t+1)), vpool.id((word, i, t))])
+    for letter in alphabet:
+        for i in states:
+            for j in states:
+                for q in states:
+                    if q != i:
+                        cnf.append([-vpool.id((i, letter, j)), -vpool.id((q, letter, j))])
+
 
     solver = Minisat22()
     solver.append_formula(cnf.clauses, no_return=False)

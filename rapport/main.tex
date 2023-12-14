@@ -178,21 +178,37 @@ nous avons donc exactement une transition par lettre de l'alphabet pour chaque �
     \end{equation*}
 \end{enumerate}
 
-%QUESTION 6
-\section{Modélisation d'un automate fini complet avec au plus $l$ états en FNC}
-\noindent Pour que l'automate fini complet ait au plus $l$ états, il suffit de rajouter aux contraintes précédentes (cf. \ref{sec:automate_deterministe_complet}) 
-la contrainte suivante (suivant le formalisme de la documentation de \href{https://pysathq.github.io/docs/html/api/solvers.html#pysat.solvers.Solver.add_atmost}{PySAT}):
-\begin{enumerate}
-    \item Il y a au plus $l$ états acceptants :
-    \begin{equation*}
-        \sum_{i=0}^{k} q_{ia} \le l
-    \end{equation*}
-\end{enumerate}
-Cette contrainte a été ajoutée au solveur \texttt{MiniCard}.
-%================= Bibliography ========================
-% \newpage
-% \phantomsection % Required if hyperref is used
-% \addcontentsline{toc}{section}{References} % Adding bibliography to table of contents
-% \printbibliography % Print the bibliography
-
-\end{document}
+\begin{center}
+    
+    \begin{tikzpicture} [node distance = 3cm, on grid, auto]
+        
+        \node (q0) [state, initial, accepting, initial text = {}] {$q_0$};
+        \node (q1) [state, above right = of q0] {$q_1$};
+        \node (q2) [state, below right = of q1] {$q_2$};
+        
+        \path [-stealth, thick]
+        (q0) edge node {1}   (q1)
+        (q1) edge node {1}   (q2)
+        (q1) edge [loop above]  node {0}()
+        (q2) edge node {1,R} (q0);
+    \end{tikzpicture}
+\end{center}
+    
+    %QUESTION 6
+    \section{Modélisation d'un automate fini complet avec au plus $l$ états en FNC}
+    \noindent Pour que l'automate fini complet ait au plus $l$ états, il suffit de rajouter aux contraintes précédentes (cf. \ref{sec:automate_deterministe_complet}) 
+    la contrainte suivante (suivant le formalisme de la documentation de \href{https://pysathq.github.io/docs/html/api/solvers.html#pysat.solvers.Solver.add_atmost}{PySAT}):
+    \begin{enumerate}
+        \item Il y a au plus $l$ états acceptants :
+        \begin{equation*}
+            \sum_{i=0}^{k} q_{ia} \le l
+        \end{equation*}
+    \end{enumerate}
+    Cette contrainte a été ajoutée au solveur \texttt{MiniCard}.
+    %================= Bibliography ========================
+    % \newpage
+    % \phantomsection % Required if hyperref is used
+    % \addcontentsline{toc}{section}{References} % Adding bibliography to table of contents
+    % \printbibliography % Print the bibliography
+    
+    \end{document}
