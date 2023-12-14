@@ -3,7 +3,7 @@ from functools import wraps
 from inspect import getfullargspec
 from utils import *
 
-from project import gen_aut, gen_minaut, gen_autc, gen_autr, gen_autcard  # , gen_autn
+from project import gen_aut, gen_minaut, gen_autc, gen_autr, gen_autcard, gen_autn
 
 from automata.fa.fa import FA
 from automata.fa.dfa import DFA

@@ -212,10 +212,11 @@ def build_nfa(alphabet, model) -> NFA | None:
                 if d(i, letter, j) in model:
                     transit[s][letter] = "q" + str(j)
 
-    print(transit)
-    print(final)
-    print(states_dfa)
+    print("states  : ", states_dfa)
     print(symbols)
+    print(transit)
+    print(initial)
+    print(final)
     nfa = NFA(
         states=states_dfa,
         input_symbols=symbols,
