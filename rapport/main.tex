@@ -118,7 +118,7 @@ représentant l'ensemble des exécutions de l'automate. Les variables $e_{m, i, 
     \item Si on a une exécution pour le mot $m$ à l'étape $t$ sur l'état $i$ et une exécution pour le même mot $m$ à l'étape $t+1$ sur l'état $j$,
     alors, il existe une transition de $i$ vers $j$ pour la lettre $l$ :
     \begin{equation*}
-        \bigwedge_{\substack{i,j \in Q\\l \in \Sigma\\m \in P\\t \in \{0,\dots,len(m)\}\\l=m[t]}} (\neg e_{m,i,t} \vee \neg e_{m,j,t+1} \vee d_{i,l,j})\equiv
+        \bigwedge_{\substack{i,j \in Q\\l \in \Sigma\\m \in P\\t \in \{0,\dots,len(m)\}\\l=m[t]}} (e_{m,i,t} \wedge e_{m,j,t+1} \rightarrow d_{i,l,j})\equiv
         \bigwedge_{\substack{i,j \in Q\\l \in \Sigma\\m \in P\\t \in \{0,\dots,len(m)\}\\l=m[t]}} (\neg e_{m,i,t} \vee \neg e_{m,j,t+1} \vee d_{i,l,j})
     \end{equation*}
     %7
