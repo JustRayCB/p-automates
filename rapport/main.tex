@@ -170,29 +170,38 @@ nous avons donc exactement une transition par lettre de l'alphabet pour chaque �
 \section{Modélisation d'un automate réversible en FNC}
 \noindent Il suffit de rajouter aux contraintes précédentes (cf. \ref{sec:modelisation_d_automates_en_fnc_}) la contrainte suivante :
 \begin{enumerate}
-    \item Toutes les transitions doivent être réversibles, autrement dit, si il existe une transition de $i$ vers $j$ pour la lettre $l$,
-    alors il existe une transition de $j$ vers $i$ pour la lettre $l$ :
+    \item S'il existe une transition de $i$ vers $j$ pour la lettre $l$, alors il n'existe pas de transition de $k$ vers $j$ pour la lettre $l$ :
     \begin{equation*}
-        \bigwedge_{\substack{i,j \in Q\\l \in \Sigma}} d_{i,l,j} \leftrightarrow d_{j,l,i}\equiv
-        \bigwedge_{\substack{i,j \in Q\\l \in \Sigma}} (\neg d_{i,l,j} \vee d_{j,l,i}) \wedge (\neg d_{j,l,i} \vee d_{i,l,j})
+        \bigwedge_{\substack{i,j \in Q\\l \in \Sigma}} d_{i,l,j} \rightarrow \neg d_{k,l,j}\equiv
+        \bigwedge_{\substack{i,j \in Q\\l \in \Sigma}} \neg d_{i,l,j} \vee \neg d_{k,l,j}
     \end{equation*}
 \end{enumerate}
 
-\begin{center}
-    
-    \begin{tikzpicture} [node distance = 3cm, on grid, auto]
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture} [node distance = 2cm, on grid, auto]
         
-        \node (q0) [state, initial, accepting, initial text = {}] {$q_0$};
-        \node (q1) [state, above right = of q0] {$q_1$};
-        \node (q2) [state, below right = of q1] {$q_2$};
+        \node (q0) [state, draw=red] {$j$};
+        \node (q1) [state, draw=red, above left = of q0] {$i$};
+        \node (q2) [state, draw=red,below left = of q0] {$k$};
         
-        \path [-stealth, thick]
-        (q0) edge node {1}   (q1)
-        (q1) edge node {1}   (q2)
-        (q1) edge [loop above]  node {0}()
-        (q2) edge node {1,R} (q0);
+        \path [-stealth, thick, draw=red, fill=red]
+        (q1) edge node {a}   (q0)
+        (q2) edge node {a} (q0);
     \end{tikzpicture}
-\end{center}
+    \hspace{4cm}
+    \begin{tikzpicture} [node distance = 2cm, on grid, auto]
+        
+        \node (q0) [state, draw=green] {$j$};
+        \node (q1) [state, draw=green, above right = of q0] {$i$};
+        \node (q2) [state, draw=green, below right = of q0] {$k$};
+        
+        \path [-stealth, thick, draw=green, fill=green]
+        (q1) edge node {a}   (q0)
+        (q2) edge node {b} (q0);
+    \end{tikzpicture}
+    \caption{A gauche nous voyons un automate non-réversible et à droite nous voyons un automate réversible}
+\end{figure}
     
     %QUESTION 6
     \section{Modélisation d'un automate fini complet avec au plus $l$ états en FNC}
