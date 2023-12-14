@@ -1,12 +1,9 @@
 from collections import defaultdict
 from functools import wraps
 from inspect import getfullargspec
+from utils import *
 
-from gen_aut import *
-from gen_autc import *
-from gen_autr import *
-from gen_minaut import *
-from gen_autcard import *
+from project import gen_aut, gen_minaut, gen_autc, gen_autr, gen_autcard  # , gen_autn
 
 from automata.fa.fa import FA
 from automata.fa.dfa import DFA
