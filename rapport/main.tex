@@ -87,74 +87,79 @@ représentant l'ensemble des exécutions de l'automate. Les variables $e_{m, i, 
     %1
     \item Il y a un unique état initial :
     \begin{equation*}
-        q_{0a} \vee q_{0na}
+        \Phi_1\equiv q_{0a} \vee q_{0na}
     \end{equation*}
     %2
     \item Un état est exclusivement acceptant ou non-acceptant :
     \begin{equation*}
-        \bigwedge_{\substack{q\in Q \\ i\in \{1,\dots,k\}}} q_{ia} \rightarrow \neg q_{ina}\equiv
+        \Phi_2\equiv\bigwedge_{\substack{q\in Q \\ i\in \{1,\dots,k\}}} q_{ia} \rightarrow \neg q_{ina}\equiv
         \bigwedge_{\substack{q\in Q \\ i\in \{1,\dots,k\}}} \neg q_{ia} \vee \neg q_{ina}
     \end{equation*}
     %3
     \item Chaque état a au plus une transition par lettre de l'alphabet :
     \begin{equation*}
-        \bigwedge_{\substack{l\in \Sigma\\i,j,q \in Q}} d_{i,l,j} \rightarrow \neg d_{i,l,q}\equiv
+        \Phi_3\equiv\bigwedge_{\substack{l\in \Sigma\\i,j,q \in Q}} d_{i,l,j} \rightarrow \neg d_{i,l,q}\equiv
         \bigwedge_{\substack{l\in \Sigma\\i,j,q \in Q}}\neg d_{i,l,j} \vee \neg d_{i,l,q}
     \end{equation*}
     %4
     \item Un état $i$ est acceptant s'il existe une exécution d'un mot $m$ de $P$ qui se termine sur l'état $i$ à l'étape $t=len(m)$ :
     \begin{equation*}
-        \bigwedge_{\substack{t=len(m)\\q \in Q\\ m \in P\\ i \in \{1,\dots,k\}}} e_{m,i,t} \rightarrow q_{ia} \equiv
+        \Phi_4\equiv\bigwedge_{\substack{t=len(m)\\q \in Q\\ m \in P\\ i \in \{1,\dots,k\}}} e_{m,i,t} \rightarrow q_{ia} \equiv
         \bigwedge_{\substack{t=len(m)\\q \in Q\\ m \in P\\ i \in \{1,\dots,k\}}} \neg e_{m,i,t} \vee q_{ia}
     \end{equation*}
     %5
     \item Si on a une exécution pour le mot $m$ à l'étape $t$ sur l'état $i$ et une transition de $i$ vers $j$ pour la lettre l,
     alors, on a une exécution pour le mot $m$ à l'étape $t+1$ sur l'état $j$ :
     \begin{equation*}
-        \bigwedge_{\substack{i,j \in Q\\l \in \Sigma\\m \in P\\t \in \{0,\dots,len(m)\}\\l=m[t]}} (e_{m,i,t} \wedge d_{i,l,j} \rightarrow e_{m,j,t+1}) \equiv
+        \Phi_5\equiv\bigwedge_{\substack{i,j \in Q\\l \in \Sigma\\m \in P\\t \in \{0,\dots,len(m)\}\\l=m[t]}} (e_{m,i,t} \wedge d_{i,l,j} \rightarrow e_{m,j,t+1}) \equiv
         \bigwedge_{\substack{i,j \in Q\\l \in \Sigma\\m \in P\\t \in \{0,\dots,len(m)\}\\l=m[t]}} (\neg e_{m,i,t} \vee \neg d_{i,l,j} \vee e_{m,j,t+1})
     \end{equation*}
     %6
     \item Si on a une exécution pour le mot $m$ à l'étape $t$ sur l'état $i$ et une exécution pour le même mot $m$ à l'étape $t+1$ sur l'état $j$,
     alors, il existe une transition de $i$ vers $j$ pour la lettre $l$ :
     \begin{equation*}
-        \bigwedge_{\substack{i,j \in Q\\l \in \Sigma\\m \in P\\t \in \{0,\dots,len(m)\}\\l=m[t]}} (e_{m,i,t} \wedge e_{m,j,t+1} \rightarrow d_{i,l,j})\equiv
+        \Phi_6\equiv\bigwedge_{\substack{i,j \in Q\\l \in \Sigma\\m \in P\\t \in \{0,\dots,len(m)\}\\l=m[t]}} (e_{m,i,t} \wedge e_{m,j,t+1} \rightarrow d_{i,l,j})\equiv
         \bigwedge_{\substack{i,j \in Q\\l \in \Sigma\\m \in P\\t \in \{0,\dots,len(m)\}\\l=m[t]}} (\neg e_{m,i,t} \vee \neg e_{m,j,t+1} \vee d_{i,l,j})
     \end{equation*}
     %7
     \item Toutes les exécutions sur les mots de N doivent se terminer sur un état non-acceptant :
     \begin{equation*}
-        \bigwedge_{\substack{m \in N\\i \in \{1,\dots,k\}\\t=len(m)}\\q\in Q} e_{m,i,t} \rightarrow q_{ina}\equiv
+        \Phi_7\equiv\bigwedge_{\substack{m \in N\\i \in \{1,\dots,k\}\\t=len(m)}\\q\in Q} e_{m,i,t} \rightarrow q_{ina}\equiv
         \bigwedge_{\substack{m \in N\\i \in \{1,\dots,k\}\\t=len(m)}\\q\in Q} \neg e_{m,i,t} \vee q_{ina}
     \end{equation*}
     %8
     \item Toutes les exécutions sur les mots de P doivent exister :
     \begin{equation*}
-        \bigwedge{\substack{m\in P}}\bigvee_{\substack{t\in\{0,\dots,len(word)\}\\i\in \{1,\dots,k\}}} e_{m,i,t+1}
+        \Phi_8\equiv\bigwedge{\substack{m\in P}}\bigvee_{\substack{t\in\{0,\dots,len(word)\}\\i\in \{1,\dots,k\}}} e_{m,i,t+1}
     \end{equation*}
     %9
     \item Toutes les exécutions doivent commencer à l'état initial :
     \begin{equation*}
-        \bigwedge_{\substack{m\in P\cup N}} e_{m,1,0}
+        \Phi_9\equiv\bigwedge_{\substack{m\in P\cup N}} e_{m,1,0}
     \end{equation*}
 \end{enumerate}
+La formule en logique propositionelle finale est :
+\begin{equation*}
+    \Phi\equiv\bigwedge_{i=1,\dots,9} \Phi_i
+\end{equation*}
 
 %QUESTION 3
 \section{Algorithme de minimisation d'un automate déterministe}
 \label{sec:algo_minimisation}
-\noindent Afin de minimiser le nombre d'états d'un automate fini sur $\Sigma$, une approche itérative est utilisée en considérant :
-\begin{equation*}
-    k\in\{0,\dots,\infty\}
-\end{equation*}
-Etant donné que l'automate est fini, il existe un nombre fini d'états, éliminant ainsi la nécessité d'une borne supérieure.
-Pour chaque valeur de $k$, les contraintes précédemment définies (cf. \ref{sec:modelisation_d_automates_en_fnc_}) sont utilisées
-dans le but de déterminer le $k$ minimal pour lequel le résultat n'est pas \texttt{None}.
-
+\noindent Afin de minimiser le nombre d'états d'un automate fini sur $\Sigma$, une approche dichotomique est utilisée en considérant :
+\begin{enumerate}
+    \item Recherche de la borne supérieure, donc un $k$ tel qu'avec $2^k$ états, la solution est trouvée.
+    \item Recherche dichotomique entre $2^{(k-1)}$ et $2^k$ pour trouver le $k$ minimal pour lequel la solution est trouvée.
+\end{enumerate}
+Etant donné que l'automate est fini, il existe un nombre fini d'états, la borne supérieure est toujours trouvée et il est possible d'itérer 
+sur $k\in\{0,\dots,\infty\}$.\\
+Finalement, il suffit d'utiliser les contraintes précédemment définies (cf. \ref{sub:contraintes}) afin de trouver
+l'automate minimal en nombre d'états.
 
 %QUESTION 4
 \section{Modélisation d'un automate déterministe complet en FNC} 
 \label{sec:automate_deterministe_complet}
-\noindent Il suffit de reprendre les contraintes précédentes (cf. \ref{sec:modelisation_d_automates_en_fnc_}) et d'ajouter la
+\noindent Il suffit de reprendre les contraintes précédentes (cf. \ref{sub:contraintes}) et d'ajouter la
 contrainte suivante :
 \begin{enumerate}
     \item Tous les états doivent avoir au moins une transition par lettre de l'alphabet :
@@ -168,7 +173,7 @@ nous avons donc exactement une transition par lettre de l'alphabet pour chaque �
 
 %QUESTION 5
 \section{Modélisation d'un automate réversible en FNC}
-\noindent Il suffit de rajouter aux contraintes précédentes (cf. \ref{sec:modelisation_d_automates_en_fnc_}) la contrainte suivante :
+\noindent Il suffit de rajouter aux contraintes précédentes (cf. \ref{sub:contraintes}) la contrainte suivante :
 \begin{enumerate}
     \item S'il existe une transition de $i$ vers $j$ pour la lettre $l$, alors il n'existe pas de transition de $k$ vers $j$ pour la lettre $l$ :
     \begin{equation*}
@@ -217,7 +222,8 @@ Cette contrainte a été ajoutée au solveur \texttt{MiniCard}.
 
 
 %QUESTION 7
-\section{}
+\section{Modélisation d'un automate non déterministe en FNC}
+\label{sec:non_deterministe}
 
 
 
