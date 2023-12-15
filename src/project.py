@@ -175,9 +175,9 @@ def params_to_cnf(alphabet: str, pos: list[str], neg: list[str], k: int):
     global cnf, states
     cnf = CNFPlus()
     states = [i for i in range(1, k + 1)]
-    one_initial_state()
+    one_initial_state()  # USELESS
     exclusively_a_na()
-    at_most_one_transition_per_letter(alphabet)
+    at_most_one_transition_per_letter(alphabet)  # USELESS
     accepting_positive_examples(pos)
     exec_and_transition_implies_next_exec(pos + neg)
     executions_implies_transition(pos)
@@ -208,15 +208,12 @@ def build_nfa(alphabet, model) -> NFA | None:
         s = "q" + str(i)
         transit[s] = dict()
         for letter in alphabet:
+            transit[s][letter] = set()
             for j in states:
                 if d(i, letter, j) in model:
-                    transit[s][letter] = "q" + str(j)
+                    # transit[s][letter] = "q" + str(j)
+                    transit[s][letter].add("q" + str(j))
 
-    print("states  : ", states_dfa)
-    print(symbols)
-    print(transit)
-    print(initial)
-    print(final)
     nfa = NFA(
         states=states_dfa,
         input_symbols=symbols,
@@ -357,16 +354,15 @@ def gen_autn(alphabet: str, pos: list[str], neg: list[str], k: int) -> NFA | Non
     all_executions_start_from_initial_state(pos + neg)
     all_positive_exec_must_exist(pos)
     model = get_model()
-    print(model)
     return build_nfa(alphabet, model)
 
 
 def main():
-    # test_aut()
-    # test_minaut()
-    # test_autc()
-    # test_autr()
-    # test_autcard()
+    test_aut()
+    test_minaut()
+    test_autc()
+    test_autr()
+    test_autcard()
     test_autn()
 
 
