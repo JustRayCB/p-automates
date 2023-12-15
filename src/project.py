@@ -177,9 +177,9 @@ def gen_cnf(alphabet: str, pos: list[str], neg: list[str], k: int):
     global cnf, states
     cnf = CNFPlus()  # Reset the cnf
     states = [i for i in range(1, k + 1)]
-    one_initial_state()  # USELESS
+    one_initial_state()
     exclusively_a_na()
-    at_most_one_transition_per_letter(alphabet)  # USELESS
+    at_most_one_transition_per_letter(alphabet)
     accepting_positive_examples(pos)
     exec_and_transition_implies_next_exec(pos + neg)
     executions_implies_transition(pos + neg)
