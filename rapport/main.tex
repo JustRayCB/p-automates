@@ -30,7 +30,7 @@
 %================= Content =============================
 
 %QUESTION 1
-\section{Modélisation d'un automate déterministe en FNC} 
+\section{Modélisation d'un automate déterministe en FNC } 
 \label{sec:modelisation_d_automates_en_fnc_}
 
 % Sachant qu'il existe les ensemble $P$ et $N$ qui représentent respectivement 
@@ -57,6 +57,9 @@ ainsi $2k$ états dans $Q$ pour un automate à $k$ états. Les variables $q_i$ p
     \item $q_{ia/na} = 1$ si l'état $i$ acceptant/non-acceptant est présent dans l'automate.
     \item $q_{ia/na} = 0$ si l'état $i$ acceptant/non-acceptant n'est pas présent dans l'automate.
 \end{itemize}
+Cette implémentation permet de représenter un automate avec au plus $k$ états. En effet, si l'état $i$ n'est pas présent dans l'automate, 
+alors, les variables $q_{ia}$ et $q_{ina}$ sont toutes les deux égales à 0. 
+
 
 \subsubsection{Transitions} 
 \label{sec:transitions} 
@@ -232,8 +235,8 @@ Cette contrainte a été ajoutée au solveur \texttt{MiniCard}.
 
 %QUESTION 8
 \section{Modélisation d'un automate avec au plus k états et k' transitions en FNC}
-En suivant le raisonnement de la question 6, il suffit de rajouter une contrainte sur le nombre de transitions et faire en sorte que
-celui-ci ne dépasse pas $k'$.
+En suivant le raisonnement de la question 6, il suffit de rajouter une contrainte au solver \texttt{MiniCard} 
+sur le nombre de transitions et faire en sorte que celui-ci ne dépasse pas $k'$.
 
 
 %================= Bibliography ========================
