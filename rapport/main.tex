@@ -20,7 +20,8 @@
 % \maketitle
 \makemargins %Afficher les marges
 \makefrontpage
-% \maketoc
+\maketoc
+
 
 %=======================================================
 
@@ -173,8 +174,8 @@ contrainte suivante :
         \bigwedge_{l \in \Sigma} \bigvee_{i,j\in Q} d_{i,l,j}
     \end{equation*}
 \end{enumerate}
-Du fait que nous avons au moins une transition par lettre de l'alphabet et au plus une transition par lettre de l'alphabet,
-nous avons donc exactement une transition par lettre de l'alphabet pour chaque état, ce qui implique que l'automate est complet.
+Comme il y a au moins une transition par lettre de l'alphabet et au plus une transition par lettre de l'alphabet,
+il y a donc exactement une transition par lettre de l'alphabet pour chaque état, ce qui implique que l'automate est complet.
 
 
 %QUESTION 5
@@ -187,6 +188,8 @@ nous avons donc exactement une transition par lettre de l'alphabet pour chaque �
         \bigwedge_{\substack{i,j,k \in Q\\l \in \Sigma}} \neg d_{i,l,j} \vee \neg d_{k,l,j}
     \end{equation*}
 \end{enumerate}
+En effet, deux états ne peuvent pas avoir une transition vers le même état avec la même lettre car si on inverse le sens des transitions,
+l'automate serait non-déterministe.
 
 \begin{figure}[H]
     \centering
@@ -211,12 +214,12 @@ nous avons donc exactement une transition par lettre de l'alphabet pour chaque �
         (q1) edge node {a}   (q0)
         (q2) edge node {b} (q0);
     \end{tikzpicture}
-    \caption{A gauche nous voyons un automate non-réversible et à droite nous voyons un automate réversible}
+    \caption{A gauche, un automate non-réversible et à droite, un automate réversible}
 \end{figure}
     
 %QUESTION 6
 \section{Modélisation d'un automate fini complet avec au plus $l$ états en FNC}
-\noindent Pour que l'automate fini complet ait au plus $l$ états, il suffit de rajouter aux contraintes précédentes (cf. \ref{sec:automate_deterministe_complet}) 
+\noindent Pour que l'automate fini complet ait au plus $l$ états, il suffit de rajouter aux contraintes de l'automate déterministe complet (cf. \ref{sec:automate_deterministe_complet}) 
 la contrainte suivante (suivant le formalisme de la documentation de \href{https://pysathq.github.io/docs/html/api/solvers.html#pysat.solvers.Solver.add_atmost}{PySAT}):
 \begin{enumerate}
     \item Il y a au plus $l$ états acceptants :
@@ -238,15 +241,23 @@ De ce fait, les variables de transitions changent de définition :
     \Delta = \{d_{i, l, J} | i\in Q, J\subseteq Q, l \in \Sigma\}
 \end{equation*}
 La contrainte ($\Phi_3$) qui émpêche d'avoir plusieurs transitions pour une même lettre $l$ depuis un état $i$ est donc supprimée. (cf. \ref{sub:contraintes})\\
-Après plusieurs essais, nous ne voyons pas en quoi les contraintes précédemment définies ne permettent pas au solveur de trouver une solution en NFA étant donné
-qu'on supprime les contraintes sur les transitions. 
+Après plusieurs essais, nous ne voyons pas en quoi les contraintes précédemment définies ne permettent pas au solveur de trouver une solution pour les
+contraintes en $FNC$.
 
 
 %QUESTION 8
 \section{Modélisation d'un automate avec au plus k états et k' transitions en FNC}
-En suivant le raisonnement de la question 6, il suffit de rajouter une contrainte au solver \texttt{MiniCard} 
+En suivant le raisonnement de la question 6, il suffirait de rajouter une contrainte au solveur \texttt{MiniCard} 
 sur le nombre de transitions et faire en sorte que celui-ci ne dépasse pas $k'$.
 
+\newpage
+\section{Annexe}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../Fonda.pdf}
+    \caption{Développement des raisonnements pour le projet}
+    \label{fig:automate}
+\end{figure}
 
 %================= Bibliography ========================
 % \newpage
