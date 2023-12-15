@@ -1,7 +1,8 @@
 from utils import *
 from typing import List
 
-from tests import *
+# from tests import test_aut, test_minaut, test_autc, test_autr, test_autcard, test_autn
+import tests
 
 from automata.fa.fa import FA
 from automata.fa.dfa import DFA
@@ -148,7 +149,7 @@ def all_positive_exec_must_exist(pos: list[str]):
 
 def at_least_one_transitions_per_letter(alphabet: str):
     """At least one transition per letter for each state."""
-    global states
+    global states, cnf
     for i in states:
         for letter in alphabet:
             disj = []
@@ -159,7 +160,7 @@ def at_least_one_transitions_per_letter(alphabet: str):
 
 def reversible_automaton(alphabet: str):
     """There should not be two transitions from two different states to the same state with the same letter."""
-    global states
+    global states, cnf
     for letter in alphabet:
         for i in states:
             for j in states:
@@ -186,45 +187,7 @@ def gen_cnf(alphabet: str, pos: list[str], neg: list[str], k: int):
     all_positive_exec_must_exist(pos)
 
 
-def build_nfa(alphabet, model) -> NFA | None:
-    global states, vpool
-    if model is None:
-        return None
-    states_dfa = set()
-    final = set()
-    symbols = set(alphabet)
-    initial = "q" + str(states[0])
-    transit = dict()
-    # Stats that should be in the automaton
-    for i in states:
-        if q_a(i) in model:
-            final.add("q" + str(i))
-            states_dfa.add("q" + str(i))
-        if q_na(i) in model:
-            states_dfa.add("q" + str(i))
-
-    # Transitions of the automaton
-    for i in states:
-        s = "q" + str(i)
-        transit[s] = dict()
-        for letter in alphabet:
-            transit[s][letter] = set()
-            for j in states:
-                if d(i, letter, j) in model:
-                    # transit[s][letter] = "q" + str(j)
-                    transit[s][letter].add("q" + str(j))
-
-    nfa = NFA(
-        states=states_dfa,
-        input_symbols=symbols,
-        transitions=transit,
-        initial_state=initial,
-        final_states=final,
-    )
-    return nfa
-
-
-def build_dfa(alphabet, model) -> DFA | None:
+def build_fa(alphabet, model, type="dfa"):
     """Build dfa from solution model given by theh SAT solver."""
     global states, vpool
     if model is None:
@@ -234,7 +197,7 @@ def build_dfa(alphabet, model) -> DFA | None:
     symbols = set(alphabet)
     initial = "q" + str(states[0])
     transit = dict()
-    # Stats that should be in the automaton
+    # Stats that should be in the automaton. Translation from model to automaton states
     for i in states:
         if q_a(i) in model:
             final.add("q" + str(i))
@@ -247,19 +210,33 @@ def build_dfa(alphabet, model) -> DFA | None:
         s = "q" + str(i)
         transit[s] = dict()
         for letter in alphabet:
+            if type == "nfa":
+                transit[s][letter] = set()
             for j in states:
                 if d(i, letter, j) in model:
-                    transit[s][letter] = "q" + str(j)
+                    if type == "dfa":
+                        transit[s][letter] = "q" + str(j)
+                    else:
+                        transit[s][letter].add("q" + str(j))
 
-    dfa = DFA(
-        states=states_dfa,
-        input_symbols=symbols,
-        transitions=transit,
-        initial_state=initial,
-        final_states=final,
-        allow_partial=True,
+    return (
+        DFA(
+            states=states_dfa,
+            input_symbols=symbols,
+            transitions=transit,
+            initial_state=initial,
+            final_states=final,
+            allow_partial=True,
+        )
+        if type == "dfa"
+        else NFA(
+            states=states_dfa,
+            input_symbols=symbols,
+            transitions=transit,
+            initial_state=initial,
+            final_states=final,
+        )
     )
-    return dfa
 
 
 def get_model():
@@ -273,19 +250,20 @@ def get_model():
 
 
 # Q2
-def gen_aut(alphabet: str, pos: list[str], neg: list[str], k: int) -> DFA | None:
+def gen_aut(alphabet: str, pos: list[str], neg: list[str], k: int):
     gen_cnf(alphabet, pos, neg, k)
     model = get_model()
-    return build_dfa(alphabet, model)
+    return build_fa(alphabet, model)
 
 
 # Q3
-def gen_minaut(alphabet: str, pos: list[str], neg: list[str]) -> DFA | None:
+def gen_minaut(alphabet: str, pos: list[str], neg: list[str]):
     found = False
     e = 0
     low = 2**e
     high = 2 ** (e + 1)
     model = None
+    # Find upper bound
     while e < 10 and not found:
         gen_cnf(alphabet, pos, neg, high)
         if get_model():
@@ -309,27 +287,27 @@ def gen_minaut(alphabet: str, pos: list[str], neg: list[str]) -> DFA | None:
         # The upper bound is the k
         gen_cnf(alphabet, pos, neg, high)
         model = get_model()
-    return build_dfa(alphabet, model)
+    return build_fa(alphabet, model)
 
 
 # Q4
-def gen_autc(alphabet: str, pos: list[str], neg: list[str], k: int) -> DFA | None:
+def gen_autc(alphabet: str, pos: list[str], neg: list[str], k: int):
     gen_cnf(alphabet, pos, neg, k)
     at_least_one_transitions_per_letter(alphabet)
     model = get_model()
-    return build_dfa(alphabet, model)
+    return build_fa(alphabet, model)
 
 
 # Q5
-def gen_autr(alphabet: str, pos: list[str], neg: list[str], k: int) -> DFA | None:
+def gen_autr(alphabet: str, pos: list[str], neg: list[str], k: int):
     gen_cnf(alphabet, pos, neg, k)
     reversible_automaton(alphabet)
     model = get_model()
-    return build_dfa(alphabet, model)
+    return build_fa(alphabet, model)
 
 
 # Q6
-def gen_autcard(alphabet: str, pos: list[str], neg: list[str], k: int, ell: int) -> DFA | None:
+def gen_autcard(alphabet: str, pos: list[str], neg: list[str], k: int, ell: int):
     global states
     gen_cnf(alphabet, pos, neg, k)
     at_least_one_transitions_per_letter(alphabet)
@@ -339,11 +317,11 @@ def gen_autcard(alphabet: str, pos: list[str], neg: list[str], k: int, ell: int)
     solver.add_atmost([q_a(i) for i in states], ell, no_return=False)
     _ = solver.solve()
     model = solver.get_model()
-    return build_dfa(alphabet, model)
+    return build_fa(alphabet, model)
 
 
 # Q7
-def gen_autn(alphabet: str, pos: list[str], neg: list[str], k: int) -> NFA | None:
+def gen_autn(alphabet: str, pos: list[str], neg: list[str], k: int):
     global cnf, states
     cnf = CNFPlus()
     states = [i for i in range(1, k + 1)]
@@ -351,21 +329,21 @@ def gen_autn(alphabet: str, pos: list[str], neg: list[str], k: int) -> NFA | Non
     exclusively_a_na()
     accepting_positive_examples(pos)
     exec_and_transition_implies_next_exec(pos + neg)
-    executions_implies_transition(pos)
+    executions_implies_transition(pos + neg)
     reject_non_positive_example(neg)
     all_executions_start_from_initial_state(pos + neg)
     all_positive_exec_must_exist(pos)
     model = get_model()
-    return build_nfa(alphabet, model)
+    return build_fa(alphabet, model, "nfa")
 
 
 def main():
-    test_aut()
-    test_minaut()
-    test_autc()
-    test_autr()
-    test_autcard()
-    test_autn()
+    tests.test_aut()
+    tests.test_minaut()
+    tests.test_autc()
+    tests.test_autr()
+    tests.test_autcard()
+    tests.test_autn()
 
 
 if __name__ == "__main__":
