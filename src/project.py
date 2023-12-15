@@ -1,7 +1,6 @@
 from utils import *
 from typing import List
 
-# from tests import test_aut, test_minaut, test_autc, test_autr, test_autcard, test_autn
 import tests
 
 from automata.fa.fa import FA
