@@ -151,10 +151,13 @@ La formule en logique propositionelle finale est :
     \item Recherche de la borne supérieure, donc un $k$ tel qu'avec $2^k$ états, la solution est trouvée.
     \item Recherche dichotomique entre $2^{(k-1)}$ et $2^k$ pour trouver le $k$ minimal pour lequel la solution est trouvée.
 \end{enumerate}
-Etant donné que l'automate est fini, il existe un nombre fini d'états, la borne supérieure est toujours trouvée et il est possible d'itérer 
-sur $k\in\{0,\dots,\infty\}$.\\
-Finalement, il suffit d'utiliser les contraintes précédemment définies (cf. \ref{sub:contraintes}) afin de trouver
+Il suffit d'utiliser les contraintes précédemment définies (cf. \ref{sub:contraintes}) afin de trouver
 l'automate minimal en nombre d'états.
+\warningbox{La réduction d'un automate fini à $k$ états se fait dans le pire des cas en un automate à $k$ états. Cependant, il est 
+question ici de générer un automate minimal et non pas de réduire un automate fini. C'est pourquoi une variable $\epsilon$
+a été introduite, l'algorithme développé va tester pour un maximum de $2^{10}$ états s'il trouve un automate. En effet, il se peut que 
+la méthode \texttt{get\_model()} ne renvoie jamais un automate si les paramètres donnés n'aboutissent pas à la création d'un automate 
+déterministe.}
 
 %QUESTION 4
 \section{Modélisation d'un automate déterministe complet en FNC} 
