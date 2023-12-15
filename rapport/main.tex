@@ -230,7 +230,16 @@ Cette contrainte a été ajoutée au solveur \texttt{MiniCard}.
 %QUESTION 7
 \section{Modélisation d'un automate non déterministe en FNC}
 \label{sec:non_deterministe}
-
+\noindent La principale différence entre un automate non-déterministe et un automate déterministe est qu'il n'y a plus un unique état $j$ accessible depuis un état $i$
+après la lecture d'une lettre $l$ mais bien un ensemble d'états $J$ accessibles depuis un état $i$ après la lecture d'une lettre $l$. Les variables de transition deviennent
+donc des relations. \\
+De ce fait, les variables de transitions changent de définition :
+\begin{equation*}
+    \Delta = \{d_{i, l, J} | i\in Q, J\subseteq Q, l \in \Sigma\}
+\end{equation*}
+La contrainte ($\Phi_3$) qui émpêche d'avoir plusieurs transitions pour une même lettre $l$ depuis un état $i$ est donc supprimée. (cf. \ref{sub:contraintes})\\
+Après plusieurs essais, nous ne voyons pas en quoi les contraintes précédemment définies ne permettent pas au solveur de trouver une solution en NFA étant donné
+qu'on supprime les contraintes sur les transitions. 
 
 
 %QUESTION 8
