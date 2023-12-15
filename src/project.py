@@ -89,6 +89,7 @@ def exec_and_transition_implies_next_exec(words: list[str]):
                             -d(i, word[t], j),
                             e(word, j, t + 1),
                         ]
+                        # execution on i at t and transition from i to j implies an execution on j at t+1
                     )
 
 
@@ -174,7 +175,7 @@ def reversible_automaton(alphabet: str):
 def gen_cnf(alphabet: str, pos: list[str], neg: list[str], k: int):
     """Build a CNF with the given parameters. The cnf should reprensents a DFA."""
     global cnf, states
-    cnf = CNFPlus()
+    cnf = CNFPlus()  # Reset the cnf
     states = [i for i in range(1, k + 1)]
     one_initial_state()  # USELESS
     exclusively_a_na()
@@ -311,7 +312,7 @@ def gen_autcard(alphabet: str, pos: list[str], neg: list[str], k: int, ell: int)
     global states
     gen_cnf(alphabet, pos, neg, k)
     at_least_one_transitions_per_letter(alphabet)
-    # Au plus ell acceptant
+    # At most ell accepting states
     solver = Minicard()
     solver.append_formula(cnf.clauses, no_return=False)
     solver.add_atmost([q_a(i) for i in states], ell, no_return=False)
