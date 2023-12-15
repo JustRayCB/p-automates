@@ -181,10 +181,10 @@ nous avons donc exactement une transition par lettre de l'alphabet pour chaque �
 \section{Modélisation d'un automate réversible en FNC}
 \noindent Il suffit de rajouter aux contraintes précédentes (cf. \ref{sub:contraintes}) la contrainte suivante :
 \begin{enumerate}
-    \item S'il existe une transition de $i$ vers $j$ pour la lettre $l$, alors il n'existe pas de transition de $k$ vers $j$ pour la lettre $l$ :
+    \item S'il existe une transition de l'état $i$ vers l'état $j$ pour la lettre $l$, alors il n'existe pas de transition de l'état $k$ vers l'état $j$ pour la lettre $l$ :
     \begin{equation*}
-        \bigwedge_{\substack{i,j \in Q\\l \in \Sigma}} d_{i,l,j} \rightarrow \neg d_{k,l,j}\equiv
-        \bigwedge_{\substack{i,j \in Q\\l \in \Sigma}} \neg d_{i,l,j} \vee \neg d_{k,l,j}
+        \bigwedge_{\substack{i,j,k \in Q\\l \in \Sigma}} d_{i,l,j} \rightarrow \neg d_{k,l,j}\equiv
+        \bigwedge_{\substack{i,j,k \in Q\\l \in \Sigma}} \neg d_{i,l,j} \vee \neg d_{k,l,j}
     \end{equation*}
 \end{enumerate}
 
