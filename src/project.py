@@ -1,7 +1,7 @@
 from utils import *
 from typing import List
 
-from mytests import *
+from tests import *
 
 from automata.fa.fa import FA
 from automata.fa.dfa import DFA
