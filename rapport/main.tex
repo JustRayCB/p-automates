@@ -51,17 +51,17 @@ Voici quelques notations utilisées dans la suite de ce rapport :
 \subsubsection{Etats}
 \label{sec:etats}
 
-\noindent L'ensemble $Q$ est défini comme suit : $Q = \{q_{0a}, q_{0na}, \dots, q_{la}, q_{lna} | l \le k\}$ contenant
+\noindent L'ensemble $Q$ est défini comme suit : $Q = \{q_{1a}, q_{1na}, \dots, q_{ka}, q_{kna} | k\}$ contenant
 ainsi $2k$ états dans $Q$ pour un automate à $k$ états. Les variables $q_i$ peuvent être définies comme suit : 
 \begin{itemize}[label=$\bullet$]
-    \item $q_{ia} = 1$ si l'état $i$ est acceptant et donc $q_{ina} = 0$.
-    \item $q_{ina} = 1$ si l'état $i$ est non-acceptant et donc $q_{ia} = 0$.
+    \item $q_{ia/na} = 1$ si l'état $i$ acceptant/non-acceptant est présent dans l'automate.
+    \item $q_{ia/na} = 0$ si l'état $i$ acceptant/non-acceptant n'est pas présent dans l'automate.
 \end{itemize}
 
 \subsubsection{Transitions} 
 \label{sec:transitions} 
 
-\noindent L'ensemble $\delta$ est défini comme suit : $\delta = \{d_{i, l, j} | i, j \in Q, l \in \Sigma\}$, représentant
+\noindent L'ensemble $\Delta$ est défini comme suit : $\Delta = \{d_{i, l, j} | i, j \in Q, l \in \Sigma\}$, représentant
 l'ensemble des transitions de l'automate. Les variables $d_{i, l, j}$ peuvent être définies comme suit : 
 \begin{itemize}[label=$\bullet$]
     \item $d_{i, l, j} = 1$ si la transition avec la lettre $l$ existe entre l'état $i$ et l'état $j$.
@@ -72,7 +72,7 @@ l'ensemble des transitions de l'automate. Les variables $d_{i, l, j}$ peuvent ê
 \subsubsection{Exécutions}
 \label{sec:executions}
 
-\noindent L'ensemble $E$ est défini comme suit : $E = \{e_{m, i, t} | i \in Q, t \in \{-1,\dots,\text{len}(m)\}\, m \in P \cup N\}$,
+\noindent L'ensemble $E$ est défini comme suit : $E = \{e_{m, i, t} | i \in Q, t \in \{0,\dots,\text{len}(m)-1\}, m \in P \cup N\}$,
 représentant l'ensemble des exécutions de l'automate. Les variables $e_{m, i, t}$ peuvent être définies comme suit :
 \begin{itemize}[label=$\bullet$]
     \item $e_{m, i, t} = 1$ si l'automate est dans l'état $i$ après avoir lu les $t$ premières lettres du mot $m$.
@@ -87,60 +87,60 @@ représentant l'ensemble des exécutions de l'automate. Les variables $e_{m, i, 
     %1
     \item Il y a un unique état initial :
     \begin{equation*}
-        \Phi_1\equiv q_{0a} \vee q_{0na}
+        \Phi_1=q_{0a} \vee q_{0na}
     \end{equation*}
     %2
     \item Un état est exclusivement acceptant ou non-acceptant :
     \begin{equation*}
-        \Phi_2\equiv\bigwedge_{\substack{q\in Q \\ i\in \{1,\dots,k\}}} q_{ia} \rightarrow \neg q_{ina}\equiv
+        \Phi_2=\bigwedge_{\substack{q\in Q \\ i\in \{1,\dots,k\}}} q_{ia} \rightarrow \neg q_{ina}\equiv
         \bigwedge_{\substack{q\in Q \\ i\in \{1,\dots,k\}}} \neg q_{ia} \vee \neg q_{ina}
     \end{equation*}
     %3
     \item Chaque état a au plus une transition par lettre de l'alphabet :
     \begin{equation*}
-        \Phi_3\equiv\bigwedge_{\substack{l\in \Sigma\\i,j,q \in Q}} d_{i,l,j} \rightarrow \neg d_{i,l,q}\equiv
+        \Phi_3=\bigwedge_{\substack{l\in \Sigma\\i,j,q \in Q}} d_{i,l,j} \rightarrow \neg d_{i,l,q}\equiv
         \bigwedge_{\substack{l\in \Sigma\\i,j,q \in Q}}\neg d_{i,l,j} \vee \neg d_{i,l,q}
     \end{equation*}
     %4
     \item Un état $i$ est acceptant s'il existe une exécution d'un mot $m$ de $P$ qui se termine sur l'état $i$ à l'étape $t=len(m)$ :
     \begin{equation*}
-        \Phi_4\equiv\bigwedge_{\substack{t=len(m)\\q \in Q\\ m \in P\\ i \in \{1,\dots,k\}}} e_{m,i,t} \rightarrow q_{ia} \equiv
+        \Phi_4=\bigwedge_{\substack{t=len(m)\\q \in Q\\ m \in P\\ i \in \{1,\dots,k\}}} e_{m,i,t} \rightarrow q_{ia} \equiv
         \bigwedge_{\substack{t=len(m)\\q \in Q\\ m \in P\\ i \in \{1,\dots,k\}}} \neg e_{m,i,t} \vee q_{ia}
     \end{equation*}
     %5
-    \item Si on a une exécution pour le mot $m$ à l'étape $t$ sur l'état $i$ et une transition de $i$ vers $j$ pour la lettre l,
+    \item Si on a une exécution qui est sur l'état $i$ pour l'étape $t$ du mot $m$ et une transition de $i$ vers $j$ pour la lettre l,
     alors, on a une exécution pour le mot $m$ à l'étape $t+1$ sur l'état $j$ :
     \begin{equation*}
-        \Phi_5\equiv\bigwedge_{\substack{i,j \in Q\\l \in \Sigma\\m \in P\\t \in \{0,\dots,len(m)\}\\l=m[t]}} (e_{m,i,t} \wedge d_{i,l,j} \rightarrow e_{m,j,t+1}) \equiv
-        \bigwedge_{\substack{i,j \in Q\\l \in \Sigma\\m \in P\\t \in \{0,\dots,len(m)\}\\l=m[t]}} (\neg e_{m,i,t} \vee \neg d_{i,l,j} \vee e_{m,j,t+1})
+        \Phi_5=\bigwedge_{\substack{i,j \in Q\\l \in \Sigma\\m \in P\cup N\\t \in \{0,\dots,len(m)\}\\l=m[t]}} (e_{m,i,t} \wedge d_{i,l,j} \rightarrow e_{m,j,t+1}) \equiv
+        \bigwedge_{\substack{i,j \in Q\\l \in \Sigma\\m \in P\cup N\\t \in \{0,\dots,len(m)\}\\l=m[t]}} (\neg e_{m,i,t} \vee \neg d_{i,l,j} \vee e_{m,j,t+1})
     \end{equation*}
     %6
-    \item Si on a une exécution pour le mot $m$ à l'étape $t$ sur l'état $i$ et une exécution pour le même mot $m$ à l'étape $t+1$ sur l'état $j$,
-    alors, il existe une transition de $i$ vers $j$ pour la lettre $l$ :
+    \item Si on a une exécution qui est sur l'état $i$ pour l'étape $t$ du mot $m$ et une exécution à l'étape $t+1$ pour le même mot $m$ qui se trouve sur l'état $j$,
+    alors, il existe une transition de $i$ vers $j$ avec la lettre $l$ :
     \begin{equation*}
-        \Phi_6\equiv\bigwedge_{\substack{i,j \in Q\\l \in \Sigma\\m \in P\\t \in \{0,\dots,len(m)\}\\l=m[t]}} (e_{m,i,t} \wedge e_{m,j,t+1} \rightarrow d_{i,l,j})\equiv
-        \bigwedge_{\substack{i,j \in Q\\l \in \Sigma\\m \in P\\t \in \{0,\dots,len(m)\}\\l=m[t]}} (\neg e_{m,i,t} \vee \neg e_{m,j,t+1} \vee d_{i,l,j})
+        \Phi_6=\bigwedge_{\substack{i,j \in Q\\l \in \Sigma\\m \in P\cup N\\t \in \{0,\dots,len(m)\}\\l=m[t]}} (e_{m,i,t} \wedge e_{m,j,t+1} \rightarrow d_{i,l,j})\equiv
+        \bigwedge_{\substack{i,j \in Q\\l \in \Sigma\\m \in P\cup N\\t \in \{0,\dots,len(m)\}\\l=m[t]}} (\neg e_{m,i,t} \vee \neg e_{m,j,t+1} \vee d_{i,l,j})
     \end{equation*}
     %7
-    \item Toutes les exécutions sur les mots de N doivent se terminer sur un état non-acceptant :
+    \item Toutes les exécutions, qui existent, sur les mots de N doivent se terminer sur un état non-acceptant :
     \begin{equation*}
-        \Phi_7\equiv\bigwedge_{\substack{m \in N\\i \in \{1,\dots,k\}\\t=len(m)}\\q\in Q} e_{m,i,t} \rightarrow q_{ina}\equiv
-        \bigwedge_{\substack{m \in N\\i \in \{1,\dots,k\}\\t=len(m)}\\q\in Q} \neg e_{m,i,t} \vee q_{ina}
+        \Phi_7=\bigwedge_{\substack{m \in N\\i \in \{1,\dots,k\}\\t=len(m)\\q\in Q}} e_{m,i,t} \rightarrow q_{ina}\equiv
+        \bigwedge_{\substack{m \in N\\i \in \{1,\dots,k\}\\t=len(m)\\q\in Q}} \neg e_{m,i,t} \vee q_{ina}
     \end{equation*}
     %8
     \item Toutes les exécutions sur les mots de P doivent exister :
     \begin{equation*}
-        \Phi_8\equiv\bigwedge{\substack{m\in P}}\bigvee_{\substack{t\in\{0,\dots,len(word)\}\\i\in \{1,\dots,k\}}} e_{m,i,t+1}
+        \Phi_8=\bigwedge{\substack{m\in P}}\bigvee_{\substack{t\in\{0,\dots,len(word)\}\\i\in \{1,\dots,k\}}} e_{m,i,t+1}
     \end{equation*}
     %9
     \item Toutes les exécutions doivent commencer à l'état initial :
     \begin{equation*}
-        \Phi_9\equiv\bigwedge_{\substack{m\in P\cup N}} e_{m,1,0}
+        \Phi_9=\bigwedge_{\substack{m\in P\cup N}} e_{m,1,0}
     \end{equation*}
 \end{enumerate}
 La formule en logique propositionelle finale est :
 \begin{equation*}
-    \Phi\equiv\bigwedge_{i=1,\dots,9} \Phi_i
+    \Phi=\bigwedge_{i=1,\dots,9} \Phi_i
 \end{equation*}
 
 %QUESTION 3
