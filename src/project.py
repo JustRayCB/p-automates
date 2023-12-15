@@ -170,7 +170,7 @@ def reversible_automaton(alphabet: str):
                         # be another transition from a state to j with the same letter
 
 
-def params_to_cnf(alphabet: str, pos: list[str], neg: list[str], k: int):
+def gen_cnf(alphabet: str, pos: list[str], neg: list[str], k: int):
     """Build a CNF with the given parameters. The cnf should reprensents a DFA."""
     global cnf, states
     cnf = CNFPlus()
@@ -180,7 +180,7 @@ def params_to_cnf(alphabet: str, pos: list[str], neg: list[str], k: int):
     at_most_one_transition_per_letter(alphabet)  # USELESS
     accepting_positive_examples(pos)
     exec_and_transition_implies_next_exec(pos + neg)
-    executions_implies_transition(pos)
+    executions_implies_transition(pos + neg)
     reject_non_positive_example(neg)
     all_executions_start_from_initial_state(pos + neg)
     all_positive_exec_must_exist(pos)
@@ -274,7 +274,7 @@ def get_model():
 
 # Q2
 def gen_aut(alphabet: str, pos: list[str], neg: list[str], k: int) -> DFA | None:
-    params_to_cnf(alphabet, pos, neg, k)
+    gen_cnf(alphabet, pos, neg, k)
     model = get_model()
     return build_dfa(alphabet, model)
 
@@ -286,18 +286,20 @@ def gen_minaut(alphabet: str, pos: list[str], neg: list[str]) -> DFA | None:
     low = 2**e
     high = 2 ** (e + 1)
     model = None
-    while not found:
-        params_to_cnf(alphabet, pos, neg, high)
+    while e < 10 and not found:
+        gen_cnf(alphabet, pos, neg, high)
         if get_model():
             found = True
         else:
             e += 1
             low = high
             high = 2 ** (e + 1)
+    if e == 10 and not found:
+        return None
     # Binary search between 2^(k-1) and 2^k
     while low < high - 1:
         mid = (low + high) // 2
-        params_to_cnf(alphabet, pos, neg, mid)
+        gen_cnf(alphabet, pos, neg, mid)
         model = get_model()
         if model:
             high = mid
@@ -305,14 +307,14 @@ def gen_minaut(alphabet: str, pos: list[str], neg: list[str]) -> DFA | None:
             low = mid
     if model is None:
         # The upper bound is the k
-        params_to_cnf(alphabet, pos, neg, high)
+        gen_cnf(alphabet, pos, neg, high)
         model = get_model()
     return build_dfa(alphabet, model)
 
 
 # Q4
 def gen_autc(alphabet: str, pos: list[str], neg: list[str], k: int) -> DFA | None:
-    params_to_cnf(alphabet, pos, neg, k)
+    gen_cnf(alphabet, pos, neg, k)
     at_least_one_transitions_per_letter(alphabet)
     model = get_model()
     return build_dfa(alphabet, model)
@@ -320,7 +322,7 @@ def gen_autc(alphabet: str, pos: list[str], neg: list[str], k: int) -> DFA | Non
 
 # Q5
 def gen_autr(alphabet: str, pos: list[str], neg: list[str], k: int) -> DFA | None:
-    params_to_cnf(alphabet, pos, neg, k)
+    gen_cnf(alphabet, pos, neg, k)
     reversible_automaton(alphabet)
     model = get_model()
     return build_dfa(alphabet, model)
@@ -329,7 +331,7 @@ def gen_autr(alphabet: str, pos: list[str], neg: list[str], k: int) -> DFA | Non
 # Q6
 def gen_autcard(alphabet: str, pos: list[str], neg: list[str], k: int, ell: int) -> DFA | None:
     global states
-    params_to_cnf(alphabet, pos, neg, k)
+    gen_cnf(alphabet, pos, neg, k)
     at_least_one_transitions_per_letter(alphabet)
     # Au plus ell acceptant
     solver = Minicard()
